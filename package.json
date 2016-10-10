@@ -1,0 +1,28 @@
+{
+  "author": "Ersun Warncke <ersun.warncke@gmail.com>",
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "deep-freeze-strict": "^1.1.1",
+    "lodash": "^4.16.4",
+    "micro-timestamp": "^0.1.0",
+    "mockumentary": "^0.2.0",
+    "random-unique-id": "^0.1.0",
+    "stable-id": "^0.2.0"
+  },
+  "description": "Immutable modular framework",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "license": "MIT",
+  "main": "lib/immutable-core.js",
+  "name": "immutable-core",
+  "repository": "warncke/immutable-core",
+  "scripts": {
+    "test": "mocha"
+  },
+  "version": "0.1.0"
+}
