@@ -59,4 +59,19 @@ describe('immutable-core: binds', function () {
         assert.throws(function () { immutable.after('BarModule.bar', fooModule.foo) }, Error)
     })
 
+    it('should not throw an error when double binding to same method/bind method/target and global allowOverride set', function () {
+        // reset global singleton data
+        immutable.reset().allowOverride(true)
+        // create FooModule
+        var fooModule = immutable.module('FooModule', {
+            foo: function (args) {
+                return Promise.resolve(true)
+            },
+        })
+        // first bind should succeed
+        assert.doesNotThrow(function () { immutable.after('BarModule.bar', fooModule.foo) }, Error)
+        // second bind should not throw error
+        assert.doesNotThrow(function () { immutable.after('BarModule.bar', fooModule.foo) }, Error)
+    })
+
 })

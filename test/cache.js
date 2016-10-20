@@ -73,6 +73,27 @@ describe('immutable-core: caches', function () {
         }, Error)
     })
 
+    it('should now throw error when trying to add cache rule to same method more than once and global allow override set', function () {
+        // reset global singleton data
+        immutable.reset().allowOverride(true)
+        // create FooModule
+        var fooModule = immutable.module('FooModule', {
+            foo: function (args) {
+                return Promise.resolve(true)
+            },
+        })
+        // build mock cache client
+        var mockCacheClient = new MockCacheClient()
+        // add cache to foo
+        immutable.cache('FooModule.foo', {
+            cacheClient: mockCacheClient,
+        })
+        // add cache to foo second time
+        assert.throws(() => {
+            immutable.cache('FooModule.foo')
+        }, Error)
+    })
+
     it('should call get and set when a method is cached with no expiration', function () {
         // reset global singleton data, set strict args to false
         immutable.reset().strictArgs(false)

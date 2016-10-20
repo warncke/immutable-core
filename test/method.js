@@ -147,6 +147,39 @@ describe('immutable-core: methods', function () {
         assert.throws(() => immutable.method('FooModule.foo', function () {}), Error)
     })
 
+    it('should not throw an error when trying to redefine a method and global allow override set', function () {
+        // reset global singleton data
+        immutable.reset().allowOverride(true)
+        // create FooModule with no methods
+        immutable.module('FooModule', {})
+        // create foo method
+        var fooMethod = immutable.method('FooModule.foo', function () {})
+        // attempt to create foo method again
+        assert.doesNotThrow(() => immutable.method('FooModule.foo', function () {}), Error)
+    })
+
+    it('should not throw an error when trying to redefine a method and module allow override set', function () {
+        // reset global singleton data
+        immutable.reset()
+        // create FooModule with no methods
+        immutable.module('FooModule', {}, {allowOverride: true})
+        // create foo method
+        var fooMethod = immutable.method('FooModule.foo', function () {})
+        // attempt to create foo method again
+        assert.doesNotThrow(() => immutable.method('FooModule.foo', function () {}), Error)
+    })
+
+    it('should not throw an error when trying to redefine a method and method allow override set', function () {
+        // reset global singleton data
+        immutable.reset()
+        // create FooModule with no methods
+        immutable.module('FooModule', {})
+        // create foo method
+        var fooMethod = immutable.method('FooModule.foo', function () {})
+        // attempt to create foo method again
+        assert.doesNotThrow(() => immutable.method('FooModule.foo', function () {}, {allowOverride: true}), Error)
+    })
+
     it('should throw an error when trying to get an undefined method', function () {
         // reset global singleton data
         immutable.reset()
