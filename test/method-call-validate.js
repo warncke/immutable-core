@@ -95,4 +95,26 @@ describe('immutable-core: method call validation', function () {
         return assert.isFulfilled(fooMethod({}))
     })
 
+    it('should validate deep default arg values', function () {
+        // reset global singleton data
+        immutable.reset()
+        // create FooModule
+        var fooModule = immutable.module('FooModule', {}, {
+            strictArgs: false,
+        })
+        // create foo method
+        var fooMethod = immutable.method('FooModule.foo', function () {}, {
+            defaultArgs: {
+                'foo.bar': 0,
+            },
+            validateArgs: {
+                'foo.bar': {
+                    presence: true,
+                },
+            },
+        })
+        // call should resolve
+        return assert.isFulfilled(fooMethod({}))
+    })
+
 });

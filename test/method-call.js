@@ -235,4 +235,23 @@ describe('immutable-core: method calls', function () {
         return fooMethod({})
     })
 
+    it('should set default arg values using lodash get/set', function () {
+        // reset global singleton data
+        immutable.reset()
+        // create FooModule
+        var fooModule = immutable.module('FooModule', {}, {
+            strictArgs: false,
+        })
+        // create foo method
+        var fooMethod = immutable.method('FooModule.foo', function (args) {
+            assert.deepEqual(args.foo, {bar:0})
+        }, {
+            defaultArgs: {
+                'foo.bar': 0,
+            },
+        })
+        // call should resolve
+        return fooMethod({})
+    })
+
 })
