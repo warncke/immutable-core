@@ -64,14 +64,24 @@ describe('immutable-core: methods', function () {
         var fooModule = immutable.module('FooModule', {})
         // create foo method
         var fooMethod = immutable.method('FooModule.foo', function () {}, {
+            defaultArgs: {
+                foo: 0,
+            },
             logClient: mockLogClient,
             strictArgs: false,
+            validateArgs: {
+                foo: {
+                    presence: true,
+                },
+            },
         })
         // get meta data
         var methodMeta = fooModule.foo.meta
         // test meta data
+        assert.deepEqual(methodMeta.defaultArgs, {foo:0})
         assert.strictEqual(methodMeta.logClient, mockLogClient)
         assert.strictEqual(methodMeta.strictArgs, false)
+        assert.deepEqual(methodMeta.validateArgs, {foo:{presence: true,}})
     })
 
     it('should throw error on bad log client', function () {

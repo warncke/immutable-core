@@ -62,7 +62,7 @@ describe('immutable-core: bind after detached method call', function () {
         // bind bar after foo
         immutable.after('FooModule.foo', barModule.bar)
         // test method call
-        assert.isRejected(fooModule.foo())
+        return assert.isRejected(fooModule.foo())
     })
 
     it('should reject if bound method throws error', function () {
@@ -85,7 +85,7 @@ describe('immutable-core: bind after detached method call', function () {
         // bind bar after foo
         immutable.after('FooModule.foo', barModule.bar)
         // test method call
-        assert.isRejected(fooModule.foo())
+        return assert.isRejected(fooModule.foo())
     })
 
     it('should merge values returned by bound method into return', function () {

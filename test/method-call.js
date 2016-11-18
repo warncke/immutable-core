@@ -54,14 +54,16 @@ describe('immutable-core: method calls', function () {
                 return Promise.resolve(true)
             },
         })
-        // undefined args
-        assert.isRejected(fooModule.foo())
-        // args not an object
-        assert.isRejected(fooModule.foo(0))
-        assert.isRejected(fooModule.foo(true))
-        assert.isRejected(fooModule.foo(null))
-        // too many args
-        assert.isRejected(fooModule.foo({session: {}}, true))
+        return Promise.all([
+            // undefined args
+            assert.isRejected(fooModule.foo()),
+            // args not an object
+            assert.isRejected(fooModule.foo(0)),
+            assert.isRejected(fooModule.foo(true)),
+            assert.isRejected(fooModule.foo(null)),
+            // too many args
+            assert.isRejected(fooModule.foo({session: {}}, true)),
+        ])
     })
 
     it('should convert all return values to promise', function () {
@@ -204,6 +206,33 @@ describe('immutable-core: method calls', function () {
             // session should not be modified
             assert.deepEqual(session, {})
         })
+    })
+
+    it('should set default arg values', function () {
+        // reset global singleton data
+        immutable.reset()
+        // create FooModule
+        var fooModule = immutable.module('FooModule', {}, {
+            strictArgs: false,
+        })
+        // create foo method
+        var fooMethod = immutable.method('FooModule.foo', function (args) {
+            assert.strictEqual(args.foo, 0)
+            assert.strictEqual(args.bar, null)
+            assert.strictEqual(args.x, 'x')
+            assert.deepEqual(args.y, {foo: 'bar'})
+            assert.deepEqual(args.z, ['foo'])
+        }, {
+            defaultArgs: {
+                bar: null,
+                foo: 0,
+                x: 'x',
+                y: {foo: 'bar'},
+                z: ['foo'],
+            },
+        })
+        // call should resolve
+        return fooMethod({})
     })
 
 })
