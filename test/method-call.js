@@ -1,8 +1,12 @@
 'use strict'
 
 const Promise = require('bluebird')
-const assert = require('chai').assert
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
 const immutable = require('../lib/immutable-core')
+
+chai.use(chaiAsPromised)
+const assert = chai.assert
 
 describe('immutable-core: method calls', function () {
 
@@ -40,7 +44,7 @@ describe('immutable-core: method calls', function () {
         })
     })
 
-    it('should throw error on invalid args', function () {
+    it('should reject on invalid args', function () {
         // reset global singleton data
         immutable.reset()
         // create FooModule
@@ -51,20 +55,13 @@ describe('immutable-core: method calls', function () {
             },
         })
         // undefined args
-        assert.throws(function () { fooModule.foo() }, Error)
+        assert.isRejected(fooModule.foo())
         // args not an object
-        assert.throws(function () { fooModule.foo(0) }, Error)
-        assert.throws(function () { fooModule.foo(true) }, Error)
-        assert.throws(function () { fooModule.foo(null) }, Error)
+        assert.isRejected(fooModule.foo(0))
+        assert.isRejected(fooModule.foo(true))
+        assert.isRejected(fooModule.foo(null))
         // too many args
-        assert.throws(function () {
-            fooModule.foo(
-                {
-                    session: {},
-                },
-                true
-            )
-        }, Error)
+        assert.isRejected(fooModule.foo({session: {}}, true))
     })
 
     it('should convert all return values to promise', function () {
