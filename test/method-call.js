@@ -10,20 +10,6 @@ const assert = chai.assert
 
 describe('immutable-core: method calls', function () {
 
-    // reset global singleton data
-    immutable.reset()
-    // create FooModule
-    var fooModule = immutable.module('FooModule', {
-        // foo method returns valid Promise
-        foo: function (args) {
-            return Promise.resolve(true)
-        },
-        // bar method returns invalid boolean
-        bar: function (args) {
-            return true
-        },
-    })
-
     it('should allow calling a method with proper args', function () {
         // reset global singleton data
         immutable.reset()
