@@ -71,4 +71,45 @@ describe('immutable-core: log', function () {
         })
     })
 
+    it('should have correct stack in log', function () {
+        // capture module call id
+        var moduleCallId
+        // create mock lock client
+        var mockLogClient = new MockLogClient({
+            log: ()=> [
+                // 1st call: module call foo
+                (type, data) => {
+                    assert.deepEqual(data.args.session.stack, [])
+                },
+                // 2nd call: module call bar
+                (type, data) => {
+                    assert.deepEqual(data.args.session.stack, ['FooModule.foo'])
+                },
+                // 3rd call: resolve bar
+                () => {},
+                // 4th call: resolve foo
+                () => {},
+            ],
+        })
+        // reset global singleton data
+        immutable.reset()
+            .logClient(mockLogClient)
+            .strictArgs(false)
+        // create FooModule
+        var fooModule = immutable.module('FooModule', {
+            bar: function (args) {
+                return Promise.resolve(true)
+            },
+            foo: function (args) {
+                return fooModule.bar(args)
+            },
+        })
+        // call foo which should log
+        return fooModule.foo()
+        // verify returned value
+        .then(value => {
+            assert.strictEqual(value, true)
+        })
+    })
+
 })
