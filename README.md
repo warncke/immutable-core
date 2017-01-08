@@ -329,3 +329,8 @@ silently ignored.
 
 The reset method clears out all modules, methods, and caching rules, and
 returns all global configuration variables to their default states.
+
+## global.__immutable_core__
+
+Immutable Core stores its singleton instance data in the
+global.__immutable_core object.
