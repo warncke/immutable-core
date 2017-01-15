@@ -99,7 +99,7 @@ describe('immutable-core: method calls', function () {
         }, Error)
     })
 
-    it('should set moduleCallId and moduleCallCreateTime on session', function () {
+    it('should set moduleCallId, moduleCallSignature and moduleCallCreateTime on session', function () {
         // reset global singleton data
         immutable.reset()
         // create FooModule
@@ -107,6 +107,8 @@ describe('immutable-core: method calls', function () {
             foo: function (args) {
                 // validate moduleCallId
                 assert.match(args.session.moduleCallId, /^[A-F0-9]{32}$/)
+                // validate moduleCallSignature
+                assert.strictEqual(args.session.moduleCallSignature, 'FooModule.foo')
                 // validate moduleCallCreateTime
                 assert.match(args.session.moduleCallCreateTime, /^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d\.\d\d\d\d\d\d$/)
             },
