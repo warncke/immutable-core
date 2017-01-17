@@ -20,6 +20,9 @@
   "directories": {
     "test": "test"
   },
+  "engines": {
+    "node" : ">=7.0.0"
+  },
   "license": "MIT",
   "main": "lib/immutable-core.js",
   "name": "immutable-core",
