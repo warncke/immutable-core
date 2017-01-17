@@ -17,7 +17,7 @@ describe('immutable-core: methods', function () {
             'foo': function () {},
         })
         // test method
-        assert.isFunction(fooModule.foo)
+        assert.strictEqual(typeof fooModule.foo, 'function')
         // test method meta data
         assert.isObject(fooModule.foo.meta)
     })
@@ -105,7 +105,7 @@ describe('immutable-core: methods', function () {
         // create foo method
         var fooMethod = immutable.method('FooModule.foo', function () {})
         // test that function created
-        assert.isFunction(fooMethod)
+        assert.strictEqual(typeof fooMethod, 'function')
         // get meta data
         var methodMeta = fooMethod.meta
         // test meta data
@@ -125,11 +125,11 @@ describe('immutable-core: methods', function () {
         // create foo method
         var fooMethod = immutable.method('FooModule.foo', function () {})
         // test that function created
-        assert.isFunction(fooMethod)
+        assert.strictEqual(typeof fooMethod, 'function')
         // create bar method
         var barMethod = immutable.method('FooModule.bar', function () {})
         // test that function created
-        assert.isFunction(barMethod)
+        assert.strictEqual(typeof barMethod, 'function')
     })
 
     it('should allow getting method after it is created', function () {
