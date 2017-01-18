@@ -205,4 +205,26 @@ describe('immutable-core: methods', function () {
         assert.throws(() => immutable.method('FooModule.foo.bar', function () {}), Error)
     })
 
+    it('should check if method exists', function () {
+        // create FooModule with foo method
+        var fooModule = immutable.module('FooModule', {
+            'foo': function () {},
+        })
+        // check if method exists
+        assert.isTrue(immutable.hasMethod('FooModule.foo'))
+    })
+
+    it('should check if method does not exists', function () {
+        // create FooModule with foo method
+        var fooModule = immutable.module('FooModule', {
+            'foo': function () {},
+        })
+        // check if method exists
+        assert.isFalse(immutable.hasMethod('FooModule.bar'))
+    })
+
+    it('should throw error when checking if invalid method signature exists', function () {
+        // check if invalid method signature exists
+        assert.throws(() => immutable.hasMethod(''), Error)
+    })
 })

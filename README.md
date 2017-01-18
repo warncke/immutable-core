@@ -49,6 +49,14 @@ Immutable Core v0.X.X branch.
         session: {}
     })
 
+## Checking if a module exists
+
+    immutable.hasModule('fooModule')
+
+## Checking if a method exists
+
+    immutable.hasMethod('fooModule.fooMethod')
+
 ## Method args
 
 By default methods must have a single object as an argument and this object
