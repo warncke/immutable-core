@@ -10,9 +10,12 @@ const assert = chai.assert
 
 describe('immutable-core: method calls', function () {
 
-    it('should allow calling a method with proper args', function () {
+    beforeEach(function () {
         // reset global singleton data
         immutable.reset()
+    })
+
+    it('should allow calling a method with proper args', function () {
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             // foo method returns valid Promise
@@ -31,8 +34,6 @@ describe('immutable-core: method calls', function () {
     })
 
     it('should reject on invalid args', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             // foo method returns valid Promise
@@ -53,8 +54,6 @@ describe('immutable-core: method calls', function () {
     })
 
     it('should convert all return values to promise', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             // bar method returns invalid boolean
@@ -72,8 +71,6 @@ describe('immutable-core: method calls', function () {
     })
 
     it('should not throw errors on invalid args if strictArgs is false', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with strictArgs false
         var fooModule = immutable.module('FooModule', {
             bam: function (args) {
@@ -100,8 +97,6 @@ describe('immutable-core: method calls', function () {
     })
 
     it('should set moduleCallId, moduleCallSignature and moduleCallCreateTime on session', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -120,8 +115,6 @@ describe('immutable-core: method calls', function () {
     })
 
     it('should manage stack for module calls', function () {
-        // reset global singleton data
-        immutable.reset()
         // create BarModule
         var barModule = immutable.module('BarModule', {
             // x ix called frst
@@ -197,8 +190,6 @@ describe('immutable-core: method calls', function () {
     })
 
     it('should set default arg values', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {}, {
             strictArgs: false,
@@ -224,8 +215,6 @@ describe('immutable-core: method calls', function () {
     })
 
     it('should set default arg values using lodash get/set', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {}, {
             strictArgs: false,

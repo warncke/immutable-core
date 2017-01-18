@@ -6,9 +6,12 @@ const immutable = require('../lib/immutable-core')
 
 describe('immutable-core: binds', function () {
 
-    it('should allow binding between two existing modules', function () {
+    beforeEach(function () {
         // reset global singleton data
         immutable.reset()
+    })
+
+    it('should allow binding between two existing modules', function () {
         // create BarModule
         var barModule = immutable.module('BarModule', {
             bar: function (args) {
@@ -29,8 +32,6 @@ describe('immutable-core: binds', function () {
     })
 
     it('should allow binding to not yet defined modules/methods', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -45,8 +46,6 @@ describe('immutable-core: binds', function () {
     })
 
     it('should throw an error on double binding to same method/bind method/target', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -60,8 +59,8 @@ describe('immutable-core: binds', function () {
     })
 
     it('should not throw an error when double binding to same method/bind method/target and global allowOverride set', function () {
-        // reset global singleton data
-        immutable.reset().allowOverride(true)
+        // allow methods/modules to be redefined
+        immutable.allowOverride(true)
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {

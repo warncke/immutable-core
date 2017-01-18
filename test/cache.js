@@ -7,9 +7,12 @@ const immutable = require('../lib/immutable-core')
 
 describe('immutable-core: caches', function () {
 
-    it('should allow adding cache rule to existing method', function () {
+    beforeEach(function () {
         // reset global singleton data
         immutable.reset()
+    })
+
+    it('should allow adding cache rule to existing method', function () {
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -25,8 +28,6 @@ describe('immutable-core: caches', function () {
     })
 
     it('should allow adding cache rule to module that does not exist', function () {
-        // reset global singleton data
-        immutable.reset()
         // build mock cache client
         var mockCacheClient = new MockCacheClient()
         // add cache to foo
@@ -36,8 +37,6 @@ describe('immutable-core: caches', function () {
     })
 
     it('should allow adding cache rule to method that does not exist', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -53,8 +52,6 @@ describe('immutable-core: caches', function () {
     })
 
     it('should throw error when trying to add cache rule to same method more than once', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -74,8 +71,8 @@ describe('immutable-core: caches', function () {
     })
 
     it('should now throw error when trying to add cache rule to same method more than once and global allow override set', function () {
-        // reset global singleton data
-        immutable.reset().allowOverride(true)
+        // allow modules/methods to be redefiend
+        immutable.allowOverride(true)
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -95,8 +92,8 @@ describe('immutable-core: caches', function () {
     })
 
     it('should call get and set when a method is cached with no expiration', function () {
-        // reset global singleton data, set strict args to false
-        immutable.reset().strictArgs(false)
+        // disable arg validation
+        immutable.strictArgs(false)
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -131,8 +128,8 @@ describe('immutable-core: caches', function () {
     })
 
     it('should use cache client for module if none defined for method', function () {
-        // reset global singleton data, set strict args to false
-        immutable.reset().strictArgs(false)
+        // disable arg validation
+        immutable.strictArgs(false)
         // build mock cache client
         var mockCacheClient = new MockCacheClient({
             get: function (key) {
@@ -166,8 +163,10 @@ describe('immutable-core: caches', function () {
                 return Promise.resolve(false)
             },
         })
-        // reset global singleton data, set strict args to false
-        immutable.reset().strictArgs(false).cacheClient(mockCacheClient)
+        // set immutable config params
+        immutable
+            .strictArgs(false)
+            .cacheClient(mockCacheClient)
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -185,8 +184,8 @@ describe('immutable-core: caches', function () {
     })
 
     it('should call get and set when a method is cached with expiration', function () {
-        // reset global singleton data, set strict args to false
-        immutable.reset().strictArgs(false)
+        // disable arg validation
+        immutable.strictArgs(false)
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -224,8 +223,8 @@ describe('immutable-core: caches', function () {
     })
 
     it('should return cached value', function () {
-        // reset global singleton data, set strict args to false
-        immutable.reset().strictArgs(false)
+        // disable arg validation
+        immutable.strictArgs(false)
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -253,8 +252,8 @@ describe('immutable-core: caches', function () {
     })
 
     it('should call original method if cache client returns rejected promise', function () {
-        // reset global singleton data, set strict args to false
-        immutable.reset().strictArgs(false)
+        // disable arg validation
+        immutable.strictArgs(false)
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -286,8 +285,8 @@ describe('immutable-core: caches', function () {
     })
 
     it('should allow custom key generation method', function () {
-        // reset global singleton data, set strict args to false
-        immutable.reset().strictArgs(false)
+        // disable arg validation
+        immutable.strictArgs(false)
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
@@ -327,8 +326,8 @@ describe('immutable-core: caches', function () {
     })
 
     it('should allow specifying the arg parameters to be used for key generation', function () {
-        // reset global singleton data, set strict args to false
-        immutable.reset().strictArgs(false)
+        // disable arg validation
+        immutable.strictArgs(false)
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {

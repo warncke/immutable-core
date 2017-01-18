@@ -12,9 +12,12 @@ var mockLogClient = new MockLogClient
 
 describe('immutable-core: modules', function () {
 
-    it('should allow creating a new module without any methods', function () {
+    beforeEach(function () {
         // reset global singleton data
         immutable.reset()
+    })
+
+    it('should allow creating a new module without any methods', function () {
         // create FooModule with no methods
         var fooModule = immutable.module('FooModule', {})
         // test name
@@ -22,8 +25,6 @@ describe('immutable-core: modules', function () {
     })
 
     it('module should have correct default options', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with no methods
         var fooModule = immutable.module('FooModule', {})
         // get module options (defaults)
@@ -35,8 +36,6 @@ describe('immutable-core: modules', function () {
     })
 
     it('should allow setting custom options', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with custom options
         var fooModule = immutable.module('FooModule', {}, {
             cacheClient: mockCacheClient,
@@ -52,8 +51,6 @@ describe('immutable-core: modules', function () {
     })
 
     it('should throw error on invalid cache client option', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with bad cache client
         assert.throws(() => {
             immutable.module('FooModule', {}, {
@@ -63,8 +60,6 @@ describe('immutable-core: modules', function () {
     })
 
     it('should throw error on invalid log client option', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with bad cache client
         assert.throws(() => {
             immutable.module('FooModule', {}, {
@@ -74,8 +69,6 @@ describe('immutable-core: modules', function () {
     })
 
     it('should allow setting custom options', function () {
-        // reset global singleton data
-        immutable.reset()
         // set defaults
         immutable.cacheClient(mockCacheClient)
         immutable.logClient(mockLogClient)
@@ -91,22 +84,16 @@ describe('immutable-core: modules', function () {
     })
 
     it('should throw error on invalid cache client default', function () {
-        // reset global singleton data
-        immutable.reset()
         // attempt to set bad cache client default
         assert.throws(() => immutable.cacheClient(function () {}), Error)
     })
 
     it('should throw error on invalid log client default', function () {
-        // reset global singleton data
-        immutable.reset()
         // attempt to set bad log client default
         assert.throws(() => immutable.logClient(function () {}), Error)
     })
 
     it('should allow creating multiple modules', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with no methods
         var fooModule = immutable.module('FooModule', {})
         // test name
@@ -118,8 +105,6 @@ describe('immutable-core: modules', function () {
     })
 
     it('should allow getting module after it is created', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with no methods
         var fooModule = immutable.module('FooModule', {})
         // create BarModule with no methods
@@ -130,8 +115,6 @@ describe('immutable-core: modules', function () {
     })
 
     it('should throw an error when trying to redefine a module', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with no methods
         immutable.module('FooModule', {})
         // attempt to create moudle again
@@ -139,22 +122,16 @@ describe('immutable-core: modules', function () {
     })
 
     it('should throw an error when trying to get an undefined module', function () {
-        // reset global singleton data
-        immutable.reset()
         // attempt to get undefined module
         assert.throws(() => immutable.module('FooModule'), Error)
     })
 
     it('should throw an error when passing invalid options', function () {
-        // reset global singleton data
-        immutable.reset()
         // attempt to create module with invalid options
         assert.throws(() => immutable.module('FooModule', {}, 0), Error)
     })
 
     it('should throw an error when creating module with invalid name', function () {
-        // reset global singleton data
-        immutable.reset()
         // attempt to create module with invalid name
         assert.throws(() => immutable.module('', {}), Error)
         assert.throws(() => immutable.module(0, {}), Error)

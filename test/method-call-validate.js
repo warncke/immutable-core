@@ -10,9 +10,12 @@ const assert = chai.assert
 
 describe('immutable-core: method call validation', function () {
 
-    it('should resolve on valid arguments', function () {
+    beforeEach(function () {
         // reset global singleton data
         immutable.reset()
+    })
+
+    it('should resolve on valid arguments', function () {
         // create FooModule
         var fooModule = immutable.module('FooModule', {}, {
             strictArgs: false,
@@ -30,8 +33,6 @@ describe('immutable-core: method call validation', function () {
     })
 
     it('should reject on invalid arguments', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {}, {
             strictArgs: false,
@@ -49,8 +50,6 @@ describe('immutable-core: method call validation', function () {
     })
 
     it('should reject with error object containing errors', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {}, {
             strictArgs: false,
@@ -74,8 +73,6 @@ describe('immutable-core: method call validation', function () {
     })
 
     it('should validate default arg values', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {}, {
             strictArgs: false,
@@ -96,8 +93,6 @@ describe('immutable-core: method call validation', function () {
     })
 
     it('should validate deep default arg values', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {}, {
             strictArgs: false,

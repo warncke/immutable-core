@@ -7,13 +7,18 @@ const immutable = require('../lib/immutable-core')
 
 describe('immutable-core: log', function () {
 
+    beforeEach(function () {
+        // reset global singleton data
+        immutable.reset()
+    })
+
     it('should allow setting default log client', function () {
         // capture module call id
         var moduleCallId
         // create mock lock client
         var mockLogClient = new MockLogClient()
-        // reset global singleton data
-        immutable.reset()
+        // set immutable params
+        immutable
             .logClient(mockLogClient)
             .strictArgs(false)
         // create FooModule
@@ -53,8 +58,8 @@ describe('immutable-core: log', function () {
                 },
             ],
         })
-        // reset global singleton data
-        immutable.reset()
+        // set immutable params
+        immutable
             .logClient(mockLogClient)
             .strictArgs(false)
         // create FooModule
@@ -91,8 +96,8 @@ describe('immutable-core: log', function () {
                 () => {},
             ],
         })
-        // reset global singleton data
-        immutable.reset()
+        // set immutable params
+        immutable
             .logClient(mockLogClient)
             .strictArgs(false)
         // create FooModule
