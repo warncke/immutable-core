@@ -139,4 +139,20 @@ describe('immutable-core: modules', function () {
         assert.throws(() => immutable.module('Foo.Bar', {}), Error)
     })
 
+    it('should test if module exists', function () {
+        // create FooModule with no methods
+        immutable.module('FooModule', {})
+        // check that module exists
+        assert.isTrue(immutable.hasModule('FooModule'))
+    })
+
+    it('should test if module does not exist', function () {
+        // check that module does not exist
+        assert.isFalse(immutable.hasModule('FooModule'))
+    })
+
+    it('should throw error when checking if invalid name exists', function () {
+        // attempt to check if invalid name exists
+        assert.throws(() => immutable.hasModule(''), Error)
+    })
 })
