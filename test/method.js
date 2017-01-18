@@ -9,9 +9,12 @@ var mockLogClient = new MockLogClient()
 
 describe('immutable-core: methods', function () {
 
-    it('should allow creating a new module with methods', function () {
+    beforeEach(function () {
         // reset global singleton data
         immutable.reset()
+    })
+
+    it('should allow creating a new module with methods', function () {
         // create FooModule with foo method
         var fooModule = immutable.module('FooModule', {
             'foo': function () {},
@@ -23,8 +26,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('method should have correct meta data', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with foo method
         var fooModule = immutable.module('FooModule', {
             'foo': function () {},
@@ -41,8 +42,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('should use custom options from module', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with custom options
         var fooModule = immutable.module('FooModule', {
             'foo': function () {},
@@ -58,8 +57,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('should allow setting custom options', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {})
         // create foo method
@@ -85,8 +82,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('should throw error on bad log client', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {})
         // create foo method with bad log client
@@ -98,8 +93,6 @@ describe('immutable-core: methods', function () {
     })    
 
     it('should allow creating methods one at a time', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {})
         // create foo method
@@ -118,8 +111,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('should allow creating multiple methods', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {})
         // create foo method
@@ -133,8 +124,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('should allow getting method after it is created', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule
         var fooModule = immutable.module('FooModule', {})
         // create foo method
@@ -147,8 +136,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('should throw an error when trying to redefine a method', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with no methods
         immutable.module('FooModule', {})
         // create foo method
@@ -158,8 +145,8 @@ describe('immutable-core: methods', function () {
     })
 
     it('should not throw an error when trying to redefine a method and global allow override set', function () {
-        // reset global singleton data
-        immutable.reset().allowOverride(true)
+        // allow redefining modules/methods
+        immutable.allowOverride(true)
         // create FooModule with no methods
         immutable.module('FooModule', {})
         // create foo method
@@ -169,8 +156,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('should not throw an error when trying to redefine a method and module allow override set', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with no methods
         immutable.module('FooModule', {}, {allowOverride: true})
         // create foo method
@@ -180,8 +165,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('should not throw an error when trying to redefine a method and method allow override set', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with no methods
         immutable.module('FooModule', {})
         // create foo method
@@ -191,8 +174,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('should throw an error when trying to get an undefined method', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with no methods
         immutable.module('FooModule', {})
         // attempt to get undefined module
@@ -200,8 +181,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('should throw an error when passing invalid options', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with no methods
         immutable.module('FooModule', {})
         // attempt to create method with invalid options
@@ -209,8 +188,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('should throw an error when creating module with invalid method', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with no methods
         immutable.module('FooModule', {})
         // attempt to create methow with invalid method
@@ -219,8 +196,6 @@ describe('immutable-core: methods', function () {
     })
 
     it('should throw an error when creating module with invalid name', function () {
-        // reset global singleton data
-        immutable.reset()
         // create FooModule with no methods
         immutable.module('FooModule', {})
         // attempt to create methow with invalid name

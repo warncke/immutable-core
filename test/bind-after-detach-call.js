@@ -6,9 +6,14 @@ const immutable = require('../lib/immutable-core')
 
 describe('immutable-core: bind after detached method call', function () {
 
-    it('should call bound function', function () {
+    beforeEach(function () {
         // reset global singleton data
-        immutable.reset().strictArgs(false)
+        immutable.reset()
+        // disable arg validation
+        immutable.strictArgs(false)
+    })
+
+    it('should call bound function', function () {
         // flag set when module called
         var called = false
         // create FooModule
@@ -42,8 +47,6 @@ describe('immutable-core: bind after detached method call', function () {
     })
 
     it('should not block if bound method rejects', function () {
-        // reset global singleton data
-        immutable.reset().strictArgs(false)
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             // foo method returns valid Promise
@@ -69,8 +72,6 @@ describe('immutable-core: bind after detached method call', function () {
     })    
 
     it('should not block if bound method throws an error', function () {
-        // reset global singleton data
-        immutable.reset().strictArgs(false)
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             // foo method returns valid Promise
@@ -96,8 +97,6 @@ describe('immutable-core: bind after detached method call', function () {
     })
 
     it('should have correct stack', function () {
-        // reset global singleton data
-        immutable.reset().strictArgs(false)
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             // foo method returns valid Promise

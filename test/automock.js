@@ -10,9 +10,12 @@ const assert = chai.assert
 
 describe('immutable-core: automock', function () {
 
-    it('should allow setting an automock function', function () {
+    beforeEach(function () {
         // reset global singleton data
         immutable.reset()
+    })
+
+    it('should allow setting an automock function', function () {
         // set automock function
         immutable.automock(function () {})
         // test automock function
@@ -21,8 +24,6 @@ describe('immutable-core: automock', function () {
 
 
     it('should throw error when calling automock with non-function', function () {
-        // reset global singleton data
-        immutable.reset()
         // call automock with object which should throw error
         assert.throws(function () {
             immutable.automock({})
@@ -30,8 +31,6 @@ describe('immutable-core: automock', function () {
     })
 
     it('should call automock function when creating module with method', function () {
-        // reset global singleton data
-        immutable.reset()
         // flag set if automock function called
         var autoMockCalled = false
         // automock application function
@@ -49,8 +48,6 @@ describe('immutable-core: automock', function () {
     })
 
     it('should call automock function when creating method', function () {
-        // reset global singleton data
-        immutable.reset()
         // flag set if automock function called
         var autoMockCalled = false
         // automock application function
@@ -68,8 +65,8 @@ describe('immutable-core: automock', function () {
     })
 
     it('should call automock wrapper function when calling method', function () {
-        // reset global singleton data
-        immutable.reset().strictArgs(false)
+        // disable arg validation
+        immutable.strictArgs(false)
         // flag set if automock function called
         var autoMockWrapperCalled = false
         // automock application function
