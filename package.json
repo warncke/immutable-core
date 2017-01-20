@@ -30,5 +30,5 @@
   "scripts": {
     "test": "mocha --harmony-async-await"
   },
-  "version": "1.0.2"
+  "version": "1.0.3"
 }
