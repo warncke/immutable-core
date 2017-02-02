@@ -87,6 +87,32 @@ Argument validation can be disabled at the global, module, and method level.
 
     }, {strictArgs: false})
 
+## Creating an Immutable functions
+
+    var foo = immutable.function('foo', function (x, y) {
+        return x + y
+    })
+
+Immutable functions can accept any number and type of arguments.
+
+If a global or local logClient is set then function args and responses will
+be logged for each function call.
+
+### Function id
+
+Every function has a unique id that is calculated by running the function
+through uglify-js to remove whitespace and comments and then calculating a
+hash of the resulting string.
+
+### Calling a function in session context
+
+    foo.call(session, arg1, ...)
+    foo.apply(session, [...])
+
+If function is called with a session object as its this argument then the
+requestId and moduleCallId from the session will be logged with the function
+call.
+
 ## Immutable Logging
 
 Immutable Core is designed to log the arguments and return values of all

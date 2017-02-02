@@ -47,7 +47,7 @@ describe('immutable-core: bind after detached method call', function () {
         })
     })
 
-    it('should reject if bound method rejects', function () {
+    it('should reject if bound method rejects', async function () {
         // create FooModule
         var fooModule = immutable.module('FooModule', {
             // foo method returns valid Promise
