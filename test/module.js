@@ -121,6 +121,13 @@ describe('immutable-core: modules', function () {
         assert.throws(() => immutable.module('FooModule', {}), Error)
     })
 
+    it('should not throw an error when trying to redefine a module and allowOverride set', function () {
+        // create FooModule with no methods
+        immutable.module('FooModule', {})
+        // attempt to create moudle again
+        assert.doesNotThrow(() => immutable.module('FooModule', {}, {allowOverride: true}), Error)
+    })
+
     it('should throw an error when trying to get an undefined module', function () {
         // attempt to get undefined module
         assert.throws(() => immutable.module('FooModule'), Error)
