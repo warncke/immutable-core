@@ -96,6 +96,40 @@ describe('immutable-core: functions', function () {
         })
     })
 
+    it('should return existing function if not defining', function () {
+        // create new function
+        immutable.function('foo', function (x) {
+            return x
+        })
+        // get function
+        var foo = immutable.function('foo')
+        // foo should be a function
+        assert.isFunction(foo)
+        // foo should return the value it is called with
+        assert.strictEqual(foo(1), 1)
+    })
+
+    it('should throw error getting non-existent function', function () {
+        assert.throws(function () {
+            // getting non-existent function should throw
+            foo = immutable.function('foo', function (x) {
+                return x
+            })
+        })
+    })
+
+    it('should have defined function', function () {
+        // create new function
+        immutable.function('foo', function (x) {
+            return x
+        })
+        assert.isTrue(immutable.hasFunction('foo'))
+    })
+
+    it('should not have non-existent function', function () {
+        assert.isFalse(immutable.hasFunction('foo'))
+    })
+
     it('should log function call and result', function () {
         var logged
         // create mock log client to test logging
