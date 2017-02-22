@@ -13,15 +13,10 @@ Immutable Core provides a framework for defining modules and methods, logging
 and caching method calls, and binding method calls to execute either before
 or after other methods.
 
-## Immutable Core v1.0.0 with async/await support
+## Native async/await
 
-Starting with v1.0.0 Immutable Core is using native async/await.
-
-As of Node.js v7.X.X node must be run with the --harmony-async-await or
---harmony flag to enable async/await support.
-
-Those who are not ready to start using async/await can continue to use the
-Immutable Core v0.X.X branch.
+Immutable Core requires Node.js v7.6.0 or greater with native async/await
+support.
 
 ## Using Immutable Core
 
