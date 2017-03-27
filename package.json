@@ -1,36 +1,25 @@
 {
   "author": "Ersun Warncke <ersun.warncke@gmail.com>",
   "dependencies": {
-    "bluebird": "3.5.0",
-    "deep-freeze-strict": "1.1.1",
-    "immutable-require-valid-log-client": "0.1.1",
-    "immutable-require-valid-optional-object": "0.1.1",
-    "lodash": "4.17.4",
-    "micro-timestamp": "0.1.12",
-    "mockumentary": "0.3.2",
-    "random-unique-id": "0.1.8",
-    "stable-id": "0.2.1",
-    "uglify-js": "2.8.16",
-    "validate.js": "0.11.1"
+    "immutable-core": "1.2.12"
   },
-  "description": "Immutable modular framework",
+  "description": "Alternative interface for immutable-core",
   "devDependencies": {
     "chai": "3.5.0",
-    "chai-as-promised": "6.0.0",
     "mocha": "3.2.0"
   },
   "directories": {
     "test": "test"
   },
   "engines": {
-    "node": ">=7.6.0"
+    "node": ">=7.0.0"
   },
   "license": "MIT",
-  "main": "lib/immutable-core.js",
-  "name": "immutable-core",
-  "repository": "warncke/immutable-core",
+  "main": "lib/immutable-ai.js",
+  "name": "immutable-ai",
+  "repository": "warncke/immutable-ai",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --harmony-async-await"
   },
-  "version": "1.2.12"
+  "version": "0.0.9"
 }
