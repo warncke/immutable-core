@@ -10,7 +10,7 @@
     "mockumentary": "0.3.2",
     "random-unique-id": "0.1.8",
     "stable-id": "0.2.1",
-    "uglify-js": "2.8.16",
+    "uglify-js": "2.8.18",
     "validate.js": "0.11.1"
   },
   "description": "Immutable modular framework",
@@ -32,5 +32,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "1.2.12"
+  "version": "1.2.13"
 }
