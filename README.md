@@ -22,35 +22,93 @@ support.
 
     var immutable = require('immutable-core')
 
-## Creating a new module with no methods
+### Creating a new module with no methods
 
     var fooModule = immutable.module('fooModule', {})
 
-## Creating a new module with a method
+### Creating a new module with a method
 
     var fooModule = immutable.module('fooModule', {
         fooMethod: function (args) {}
     })
 
-## Adding a method to a module
+### Adding a method to a module
 
     var fooMethod = immutable.method('fooModule.fooMethod', function (args) {
 
     })
 
-## Calling a method
+### Calling a method
 
     fooModule.fooMethod({
         session: {}
     })
 
-## Checking if a module exists
+### Checking if a module exists
 
     immutable.hasModule('fooModule')
 
-## Checking if a method exists
+### Checking if a method exists
 
     immutable.hasMethod('fooModule.fooMethod')
+
+## Using Immutable AI
+
+    immutable.module('barModule', {
+        bar: function (args) {
+            ...
+        }
+    })
+
+    var fooModule = immutable.module('fooModule', {
+        fooMethod: function (args) {
+            // call barModule.bar using Immutable AI
+            this.module.bar.bar()
+        }
+    })
+
+[Immutable AI](https://www.npmjs.com/package/immutable-ai) provides an object-
+oriented facade that simplifies the use of Immutable Core.
+
+Without Immutable AI it is necessary to manually pass the `session` object that
+is passed in the arguments to an Immutable method to all subsequent method
+calls, http requests, and other Immutable framework operations.
+
+With Immutable AI an new Immutable AI instance is created for each method call
+and the method function is called with that instance as the `this` argument.
+
+All calls made through Immutable AI access via `this` will have the current
+`session` object added to them.
+
+Immutable AI implements namespaces which help to organize modules.
+
+Using Immutable AI gives access to all Immutable Modules currently loaded so
+it is not necessary to `require` individual module files in order to use them.
+
+### Immutable AI performance considerations
+
+Immutable AI uses
+[javascript proxies](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
+and must instantiate a new function object and Proxy function for each method
+call.
+
+For most Immutable Core modules and methods the overheads of Immutable AI will
+be relatively small but if profiling shows that these overheads are having a
+significant impact on application performance Immutable AI can be disabled.
+
+### Disabling Immutable AI globally
+
+    immutable.immutableAI(false)
+
+### Disabling Immutable AI at the module level
+
+    immutable.module('fooModule', {}, {immutableAI: false})
+
+### Disabling Immutable AI at the method level
+
+    immutable.method('fooModule.fooMethod', function () {
+
+    }, {immutableAI: false})
 
 ## Method args
 
@@ -82,7 +140,7 @@ Argument validation can be disabled at the global, module, and method level.
 
     }, {strictArgs: false})
 
-## Creating an Immutable functions
+## Creating an Immutable function
 
     var foo = immutable.function('foo', function (x, y) {
         return x + y
@@ -333,6 +391,16 @@ a caching rule specifies a different cache client.
 The cache client must conform to the specification in
 immutable-require-valid-cache-client. An error will be throw for non-conforming
 clients.
+
+### immutableAI
+
+    immutable.immutableAI(false)
+
+By default Immutable Core will create a new Immutable AI instance with each
+method call and call the method with the Immutable AI instance as the `this`
+argument.
+
+This can be disabled globally or at the module or method level.
 
 ### logClient
 
