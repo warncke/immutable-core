@@ -66,28 +66,6 @@ describe('immutable-core: immutable ai', function () {
         assert.strictEqual(ret, 'bar')
     })
 
-    it('should work with Model namespace', async function () {
-        // create barModel
-        var barModule = immutable.module('barModel', {
-            bar: function (args) {
-                // check that session passed
-                assert.strictEqual(args.session.sessionId, session.sessionId)
-                // return value to check
-                return 'bar'
-            },
-        })
-        // create FooModule
-        var fooModule = immutable.module('fooModule', {
-            foo: function (args) {
-                return this.model.bar.bar()
-            },
-        })
-        // test method call
-        var ret = await fooModule.foo({session: session})
-        // test returned value
-        assert.strictEqual(ret, 'bar')
-    })
-
     it('should work with Controller namespace', async function () {
         // create barController
         var barModule = immutable.module('barController', {
