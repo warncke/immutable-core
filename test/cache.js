@@ -104,13 +104,13 @@ describe('immutable-core: caches', function () {
         var mockCacheClient = new MockCacheClient({
             get: function (key) {
                 // validate key
-                assert.strictEqual(key, '7719DF2A5745EAF3127112FB1E9EE176')
+                assert.strictEqual(key, '7719df2a5745eaf3127112fb1e9ee176')
                 // return null which should result in original method being called
                 return Promise.resolve(null)
             },
             set: function (key, value) {
                 // validate key
-                assert.strictEqual(key, '7719DF2A5745EAF3127112FB1E9EE176')
+                assert.strictEqual(key, '7719df2a5745eaf3127112fb1e9ee176')
                 // validate value which should be return from foo
                 assert.strictEqual(value, true)
             },
@@ -196,13 +196,13 @@ describe('immutable-core: caches', function () {
         var mockCacheClient = new MockCacheClient({
             get: function (key) {
                 // validate key
-                assert.strictEqual(key, '7719DF2A5745EAF3127112FB1E9EE176')
+                assert.strictEqual(key, '7719df2a5745eaf3127112fb1e9ee176')
                 // return null which should result in original method being called
                 return Promise.resolve(null)
             },
             setex: function (key, value, expire) {
                 // validate key
-                assert.strictEqual(key, '7719DF2A5745EAF3127112FB1E9EE176')
+                assert.strictEqual(key, '7719df2a5745eaf3127112fb1e9ee176')
                 // validate value which should be return from foo
                 assert.strictEqual(value, true)
                 // validate expiration
@@ -267,7 +267,7 @@ describe('immutable-core: caches', function () {
             },
             set: function (key, value) {
                 // validate key
-                assert.strictEqual(key, '7719DF2A5745EAF3127112FB1E9EE176')
+                assert.strictEqual(key, '7719df2a5745eaf3127112fb1e9ee176')
                 // validate value which should be return from foo
                 assert.strictEqual(value, true)
             },
@@ -338,7 +338,7 @@ describe('immutable-core: caches', function () {
         var mockCacheClient = new MockCacheClient({
             get: function (key) {
                 // validate cache key
-                assert.strictEqual(key, '6A88C6364FEA0EE0C30648A5062FAC2D')
+                assert.strictEqual(key, '6a88c6364fea0ee0c30648a5062fac2d')
                 // return null so original method is called
                 return Promise.resolve(null)
             },

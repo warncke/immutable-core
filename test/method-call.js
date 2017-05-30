@@ -101,7 +101,7 @@ describe('immutable-core: method calls', function () {
         var fooModule = immutable.module('FooModule', {
             foo: function (args) {
                 // validate moduleCallId
-                assert.match(args.session.moduleCallId, /^[A-F0-9]{32}$/)
+                assert.match(args.session.moduleCallId, /^[a-f0-9]{32}$/)
                 // validate moduleCallSignature
                 assert.strictEqual(args.session.moduleCallSignature, 'FooModule.foo')
                 // validate moduleCallCreateTime

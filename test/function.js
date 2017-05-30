@@ -43,7 +43,7 @@ describe('immutable-core: functions', function () {
         assert.deepEqual(foo.meta, {
             functionBody: 'function(x){if(x){try{var y=JSON.stringify(x)}catch(err){console.log(err)}}return y}',
             functionName: 'foo',
-            functionId: 'FB3079417F7EB36EBD624CEA77B5A796',
+            functionId: 'fb3079417f7eb36ebd624cea77b5a796',
             logClient: undefined,
         })
     })
