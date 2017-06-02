@@ -4,13 +4,13 @@
     "bluebird": "3.5.0",
     "deep-freeze-strict": "1.1.1",
     "immutable-ai": "0.4.6",
-    "immutable-require-valid-log-client": "0.1.5",
-    "immutable-require-valid-optional-object": "0.1.5",
+    "immutable-require-valid-log-client": "0.1.6",
+    "immutable-require-valid-optional-object": "0.1.6",
     "lodash": "4.17.4",
-    "micro-timestamp": "0.1.17",
-    "mockumentary": "0.3.6",
-    "random-unique-id": "1.0.1",
-    "stable-id": "1.0.0",
+    "micro-timestamp": "0.1.18",
+    "mockumentary": "0.3.7",
+    "random-unique-id": "1.0.2",
+    "stable-id": "1.0.1",
     "uglify-js": "3.0.15",
     "validate.js": "0.11.1"
   },
@@ -33,5 +33,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "1.4.2"
+  "version": "1.4.3"
 }
