@@ -9,7 +9,7 @@
     "lodash": "4.17.4",
     "micro-timestamp": "0.1.19",
     "mockumentary": "0.3.7",
-    "random-unique-id": "1.0.3",
+    "random-unique-id": "1.0.4",
     "stable-id": "1.0.1",
     "uglify-js": "3.0.15",
     "validate.js": "0.11.1"
@@ -33,5 +33,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "1.4.5"
+  "version": "1.4.6"
 }
