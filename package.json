@@ -7,7 +7,7 @@
     "immutable-require-valid-log-client": "0.1.6",
     "immutable-require-valid-optional-object": "0.1.6",
     "lodash": "4.17.4",
-    "micro-timestamp": "0.1.18",
+    "micro-timestamp": "0.1.19",
     "mockumentary": "0.3.7",
     "random-unique-id": "1.0.3",
     "stable-id": "1.0.1",
@@ -33,5 +33,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "1.4.4"
+  "version": "1.4.5"
 }
