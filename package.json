@@ -3,7 +3,7 @@
   "dependencies": {
     "bluebird": "3.5.0",
     "deep-freeze-strict": "1.1.1",
-    "immutable-ai": "0.5.2",
+    "immutable-ai": "0.5.3",
     "immutable-require-valid-log-client": "0.1.9",
     "immutable-require-valid-optional-object": "0.1.9",
     "lodash": "4.17.4",
@@ -11,14 +11,14 @@
     "mockumentary": "0.3.10",
     "random-unique-id": "1.0.9",
     "stable-id": "1.0.4",
-    "uglify-js": "3.0.26",
+    "uglify-js": "3.0.27",
     "validate.js": "0.11.1"
   },
   "description": "Immutable modular framework",
   "devDependencies": {
     "chai": "4.1.0",
     "chai-as-promised": "7.1.1",
-    "mocha": "3.4.2"
+    "mocha": "3.5.0"
   },
   "directories": {
     "test": "test"
@@ -33,5 +33,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "1.4.24"
+  "version": "1.4.25"
 }
