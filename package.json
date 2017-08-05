@@ -3,7 +3,7 @@
   "dependencies": {
     "bluebird": "3.5.0",
     "deep-freeze-strict": "1.1.1",
-    "immutable-ai": "0.5.3",
+    "immutable-ai": "0.5.4",
     "immutable-require-valid-log-client": "0.1.10",
     "immutable-require-valid-optional-object": "0.1.10",
     "lodash": "4.17.4",
@@ -16,7 +16,7 @@
   },
   "description": "Immutable modular framework",
   "devDependencies": {
-    "chai": "4.1.0",
+    "chai": "4.1.1",
     "chai-as-promised": "7.1.1",
     "mocha": "3.5.0"
   },
@@ -33,5 +33,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "1.4.26"
+  "version": "1.4.27"
 }
