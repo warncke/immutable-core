@@ -1,14 +1,18 @@
 'use strict'
 
+/* npm modules */
 const Promise = require('bluebird')
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
+
+/* application modules */
 const immutable = require('../lib/immutable-core')
 
+/* chai config */
 chai.use(chaiAsPromised)
 const assert = chai.assert
 
-describe('immutable-core: bind before method call', function () {
+describe('immutable-core bind before method call', function () {
 
     beforeEach(function () {
         // reset global singleton data

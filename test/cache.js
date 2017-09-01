@@ -1,363 +1,262 @@
 'use strict'
 
-const MockCacheClient = require('../mock/mock-cache-client')
+/* npm modules */
 const Promise = require('bluebird')
-const assert = require('chai').assert
-const immutable = require('../lib/immutable-core')
+const chai = require('chai')
+const sinon = require('sinon')
 
-describe('immutable-core: caches', function () {
+/* application modules */
+const ImmutableCore = require('../lib/immutable-core')
+const MockCacheClient = require('../mock/mock-cache-client')
+
+/* chai config */
+const assert = chai.assert
+sinon.assert.expose(chai.assert, { prefix: '' })
+
+describe('immutable-core cache', function () {
+
+    var sandbox
+
+    var cacheClient
 
     beforeEach(function () {
         // reset global singleton data
-        immutable.reset()
+        ImmutableCore.reset().strictArgs(false)
+        // create sinon sandbox
+        sandbox = sinon.sandbox.create()
+        // create mock logclient
+        cacheClient = new MockCacheClient(sandbox)
+    })
+
+    afterEach(function () {
+        // clear sinon sandbox
+        sandbox.restore()
     })
 
     it('should allow adding cache rule to existing method', function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient()
         // add cache to foo
-        immutable.cache('FooModule.foo', {
-            cacheClient: mockCacheClient,
-        })
+        ImmutableCore.cache('FooModule.foo', {cacheClient: cacheClient})
     })
 
     it('should allow adding cache rule to module that does not exist', function () {
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient()
         // add cache to foo
-        immutable.cache('FooModule.foo', {
-            cacheClient: mockCacheClient,
-        })
+        ImmutableCore.cache('FooModule.foo', {cacheClient: cacheClient})
     })
 
     it('should allow adding cache rule to method that does not exist', function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
-        })
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient()
+        var fooModule = ImmutableCore.module('FooModule', {})
         // add cache to foo
-        immutable.cache('FooModule.foo', {
-            cacheClient: mockCacheClient,
-        })
+        ImmutableCore.cache('FooModule.foo', {cacheClient: cacheClient})
     })
 
     it('should throw error when trying to add cache rule to same method more than once', function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient()
         // add cache to foo
-        immutable.cache('FooModule.foo', {
-            cacheClient: mockCacheClient,
-        })
+        ImmutableCore.cache('FooModule.foo', {cacheClient: cacheClient})
         // add cache to foo second time
-        assert.throws(() => {
-            immutable.cache('FooModule.foo')
-        }, Error)
+        assert.throws(() => ImmutableCore.cache('FooModule.foo'))
     })
 
     it('should now throw error when trying to add cache rule to same method more than once and global allow override set', function () {
         // allow modules/methods to be redefiend
-        immutable.allowOverride(true)
+        ImmutableCore.allowOverride(true)
         // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient()
         // add cache to foo
-        immutable.cache('FooModule.foo', {
-            cacheClient: mockCacheClient,
-        })
+        ImmutableCore.cache('FooModule.foo', {cacheClient: cacheClient})
         // add cache to foo second time
-        assert.throws(() => {
-            immutable.cache('FooModule.foo')
-        }, Error)
+        assert.throws(() => ImmutableCore.cache('FooModule.foo'))
     })
 
-    it('should call get and set when a method is cached with no expiration', function () {
-        // disable arg validation
-        immutable.strictArgs(false)
+    it('should call get and set when a method is cached with no expiration', async function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
-        })
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient({
-            get: function (key) {
-                // validate key
-                assert.strictEqual(key, '7719df2a5745eaf3127112fb1e9ee176')
-                // return null which should result in original method being called
-                return Promise.resolve(null)
-            },
-            set: function (key, value) {
-                // validate key
-                assert.strictEqual(key, '7719df2a5745eaf3127112fb1e9ee176')
-                // validate value which should be return from foo
-                assert.strictEqual(value, true)
-            },
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
         // add cache to foo with cache client
-        immutable.cache('FooModule.foo', {
-            cacheClient: mockCacheClient,
-        })
+        ImmutableCore.cache('FooModule.foo', {cacheClient: cacheClient})
         // call foo which should call get and set
-        return fooModule.foo()
+        var value = await fooModule.foo()
         // verify returned value
-        .then(value => {
-            assert.strictEqual(value, true)
-        })
+        assert.strictEqual(value, true)
+        // check that cache called
+        assert.calledOnce(cacheClient.get)
+        assert.calledWith(cacheClient.get, '7719df2a5745eaf3127112fb1e9ee176')
+        assert.calledOnce(cacheClient.set)
+        assert.calledWithMatch(cacheClient.set,
+            '7719df2a5745eaf3127112fb1e9ee176',
+            true,
+            {moduleCallSignature: 'FooModule.foo'}
+        )
     })
 
-    it('should use cache client for module if none defined for method', function () {
-        // disable arg validation
-        immutable.strictArgs(false)
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient({
-            get: function (key) {
-                // this should be returned instead of target method
-                return Promise.resolve(false)
-            },
-        })
+    it('should use cache client for module if none defined for method', async function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         }, {
-            cacheClient: mockCacheClient,
+            cacheClient: cacheClient,
         })
         // add cache to foo with cache client
-        immutable.cache('FooModule.foo')
+        ImmutableCore.cache('FooModule.foo')
+        // set cache to return false value
+        cacheClient.get.resolves(false)
         // call foo which should call get and set
-        return fooModule.foo()
+        var value = await fooModule.foo()
         // verify returned value
-        .then(value => {
-            assert.strictEqual(value, false)
-        })
+        assert.strictEqual(value, false)
     })
 
-    it('should use default cache client if none defined for module or method', function () {
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient({
-            get: function (key) {
-                // this should be returned instead of target method
-                return Promise.resolve(false)
-            },
-        })
-        // set immutable config params
-        immutable
-            .strictArgs(false)
-            .cacheClient(mockCacheClient)
+    it('should use default cache client if none defined for module or method', async function () {
+        // set global cache client
+        ImmutableCore.cacheClient(cacheClient)
         // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
         // add cache to foo with cache client
-        immutable.cache('FooModule.foo')
+        ImmutableCore.cache('FooModule.foo')
+        // set cache to return false value
+        cacheClient.get.resolves(false)
         // call foo which should call get and set
-        return fooModule.foo()
+        var value = await fooModule.foo()
         // verify returned value
-        .then(value => {
-            assert.strictEqual(value, false)
-        })
+        assert.strictEqual(value, false)
     })
 
-    it('should call get and set when a method is cached with expiration', function () {
-        // disable arg validation
-        immutable.strictArgs(false)
+    it('should call get and set when a method is cached with expiration', async function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
-        })
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient({
-            get: function (key) {
-                // validate key
-                assert.strictEqual(key, '7719df2a5745eaf3127112fb1e9ee176')
-                // return null which should result in original method being called
-                return Promise.resolve(null)
-            },
-            setex: function (key, value, expire) {
-                // validate key
-                assert.strictEqual(key, '7719df2a5745eaf3127112fb1e9ee176')
-                // validate value which should be return from foo
-                assert.strictEqual(value, true)
-                // validate expiration
-                assert.strictEqual(expire, 60)
-            },
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
         // add cache to foo with cache client
-        immutable.cache('FooModule.foo', {
-            cacheClient: mockCacheClient,
+        ImmutableCore.cache('FooModule.foo', {
+            cacheClient: cacheClient,
             expire: 60,
         })
         // call foo which should call get and set
-        return fooModule.foo()
+        var value = await fooModule.foo()
         // verify returned value
-        .then(value => {
-            assert.strictEqual(value, true)
-        })
+        assert.strictEqual(value, true)
+        // check that cache called
+        assert.calledOnce(cacheClient.get)
+        assert.calledWith(cacheClient.get, '7719df2a5745eaf3127112fb1e9ee176')
+        assert.notCalled(cacheClient.set)
+        assert.calledOnce(cacheClient.setex)
+        assert.calledWithMatch(cacheClient.setex,
+            '7719df2a5745eaf3127112fb1e9ee176',
+            true,
+            60,
+            {moduleCallSignature: 'FooModule.foo'}
+        )
     })
 
-    it('should return cached value', function () {
-        // disable arg validation
-        immutable.strictArgs(false)
+    it('should return cached value', async function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
-        })
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient({
-            get: function (key) {
-                // return not null value which should be returned
-                // instead of calling cached method
-                return Promise.resolve(false)
-            },
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
         // add cache to foo with cache client
-        immutable.cache('FooModule.foo', {
-            cacheClient: mockCacheClient,
+        ImmutableCore.cache('FooModule.foo', {cacheClient: cacheClient})
+        // set cache to return false value
+        cacheClient.get.resolves(false)
+        // call foo which should call get and set
+        var value = await fooModule.foo()
+        // verify returned value
+        assert.strictEqual(value, false)
+    })
+
+    it('should call original method if cache client returns rejected promise', async function () {
+        // create FooModule
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
+        })
+        // add cache to foo with cache client
+        ImmutableCore.cache('FooModule.foo', {cacheClient: cacheClient})
+        // set cache to reject on get
+        cacheClient.get.rejects()
+        // call foo which should call get and set
+        var value = await fooModule.foo()
+        // verify returned value
+        assert.strictEqual(value, true)
+        // check that cache called
+        assert.calledOnce(cacheClient.get)
+        assert.calledWith(cacheClient.get, '7719df2a5745eaf3127112fb1e9ee176')
+        assert.calledOnce(cacheClient.set)
+        assert.calledWithMatch(cacheClient.set,
+            '7719df2a5745eaf3127112fb1e9ee176',
+            true,
+            {moduleCallSignature: 'FooModule.foo'}
+        )
+    })
+
+    it('should allow custom key generation method', async function () {
+        // create FooModule
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
+        })
+        // create mock key method
+        var keyMethod = sandbox.stub().returns('foo')
+        // add cache to foo with cache client and key method
+        ImmutableCore.cache('FooModule.foo', {
+            cacheClient: cacheClient,
+            keyMethod: keyMethod,
         })
         // call foo which should call get and set
-        return fooModule.foo()
+        var value = await fooModule.foo({foo: 'bar'})
         // verify returned value
-        .then(value => {
-            assert.strictEqual(value, false)
-        })
+        assert.strictEqual(value, true)
+        // check that key method called
+        assert.calledOnce(keyMethod)
+        assert.calledWithMatch(keyMethod,
+            {foo: 'bar', session: {}},
+            {signature: 'FooModule.foo'}
+        )
+        // check that cache called
+        assert.calledOnce(cacheClient.get)
+        assert.calledWith(cacheClient.get, 'foo')
+        assert.calledOnce(cacheClient.set)
+        assert.calledWithMatch(cacheClient.set,
+            'foo',
+            true,
+            {moduleCallSignature: 'FooModule.foo'}
+        )
     })
 
-    it('should call original method if cache client returns rejected promise', function () {
-        // disable arg validation
-        immutable.strictArgs(false)
+    it('should allow specifying the arg parameters to be used for key generation', async function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
-        })
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient({
-            get: function (key) {
-                return Promise.reject()
-            },
-            set: function (key, value) {
-                // validate key
-                assert.strictEqual(key, '7719df2a5745eaf3127112fb1e9ee176')
-                // validate value which should be return from foo
-                assert.strictEqual(value, true)
-            },
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
         // add cache to foo with cache client
-        immutable.cache('FooModule.foo', {
-            cacheClient: mockCacheClient,
-        })
-        // call foo which should call get and set
-        return fooModule.foo()
-        // verify returned value
-        .then(value => {
-            assert.strictEqual(value, true)
-        })
-    })
-
-    it('should allow custom key generation method', function () {
-        // disable arg validation
-        immutable.strictArgs(false)
-        // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
-        })
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient({
-            get: function (key) {
-                // validate cache key
-                assert.strictEqual(key, 'FOO')
-                // return null so original method is called
-                return Promise.resolve(null)
-            },
-        })
-        // add cache to foo with cache client
-        immutable.cache('FooModule.foo', {
-            cacheClient: mockCacheClient,
-            // custom key generation method
-            keyMethod: function (args, methodMeta) {
-                // validate args
-                assert.strictEqual(args.foo, 'bar')
-                // validate method meta data
-                assert.strictEqual(methodMeta.signature, 'FooModule.foo')
-                // return cache key
-                return 'FOO'
-            },
-        })
-        // call foo which should call get and set
-        return fooModule.foo({
-            foo: 'bar',
-        })
-        // verify returned value
-        .then(value => {
-            assert.strictEqual(value, true)
-        })
-    })
-
-    it('should allow specifying the arg parameters to be used for key generation', function () {
-        // disable arg validation
-        immutable.strictArgs(false)
-        // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
-        })
-        // build mock cache client
-        var mockCacheClient = new MockCacheClient({
-            get: function (key) {
-                // validate cache key
-                assert.strictEqual(key, '6a88c6364fea0ee0c30648a5062fac2d')
-                // return null so original method is called
-                return Promise.resolve(null)
-            },
-        })
-        // add cache to foo with cache client
-        immutable.cache('FooModule.foo', {
-            cacheClient: mockCacheClient,
+        ImmutableCore.cache('FooModule.foo', {
+            cacheClient: cacheClient,
             // list of args parameters to use for generating key
             keyParams: ['foo'],
         })
         // call foo which should call get and set
-        return fooModule.foo({
-            foo: 1,
-            bar: 2,
-        })
+        var value = await fooModule.foo({foo: 1, bar: 2})
         // verify returned value
-        .then(value => {
-            assert.strictEqual(value, true)
-        })
+        assert.strictEqual(value, true)
+        // check that cache called
+        assert.calledOnce(cacheClient.get)
+        assert.calledWith(cacheClient.get, '6a88c6364fea0ee0c30648a5062fac2d')
+        assert.calledOnce(cacheClient.set)
+        assert.calledWithMatch(cacheClient.set,
+            '6a88c6364fea0ee0c30648a5062fac2d',
+            true,
+            {moduleCallSignature: 'FooModule.foo'}
+        )
     })
 
 })

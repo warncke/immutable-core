@@ -1,92 +1,90 @@
 'use strict'
 
-const Promise = require('bluebird')
+/* npm modules */
 const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-const immutable = require('../lib/immutable-core')
+const sinon = require('sinon')
 
-chai.use(chaiAsPromised)
+/* application modules */
+const ImmutableCore = require('../lib/immutable-core')
+
+/* chai config */
 const assert = chai.assert
+sinon.assert.expose(chai.assert, { prefix: '' })
 
-describe('immutable-core: automock', function () {
+describe('immutable-core automock', function () {
+
+    var sandbox
 
     beforeEach(function () {
         // reset global singleton data
-        immutable.reset()
+        ImmutableCore.reset().strictArgs(false)
+        // create sinon sandbox
+        sandbox = sinon.sandbox.create()
+    })
+
+    afterEach(function () {
+        // clear sinon sandbox
+        sandbox.restore()
     })
 
     it('should allow setting an automock function', function () {
         // set automock function
-        immutable.automock(function () {})
+        ImmutableCore.automock(function () {})
         // test automock function
-        assert.isFunction(immutable.automock())
+        assert.isFunction(ImmutableCore.automock())
     })
 
 
     it('should throw error when calling automock with non-function', function () {
         // call automock with object which should throw error
-        assert.throws(function () {
-            immutable.automock({})
-        }, Error)
+        assert.throws(() => ImmutableCore.automock({}))
     })
 
     it('should call automock function when creating module with method', function () {
-        // flag set if automock function called
-        var autoMockCalled = false
-        // automock application function
-        var automock = function (method) {
-            autoMockCalled = true
-        }
+        // create automock stub
+        var automock = sandbox.stub()
         // set automock function
-        immutable.automock(automock)
+        ImmutableCore.automock(automock)
         // create new module with method
-        var fooModule = immutable.module('FooModule', {
-            foo: function () {},
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
         // automock function should have been called
-        assert.isTrue(autoMockCalled)
+        assert.calledOnce(automock)
     })
 
     it('should call automock function when creating method', function () {
-        // flag set if automock function called
-        var autoMockCalled = false
-        // automock application function
-        var automock = function (method) {
-            autoMockCalled = true
-        }
+        // create automock stub
+        var automock = sandbox.stub()
         // set automock function
-        immutable.automock(automock)
+        ImmutableCore.automock(automock)
         // create new module
-        var fooModule = immutable.module('FooModule', {})
+        var fooModule = ImmutableCore.module('FooModule', {})
         // create new method
-        immutable.method('FooModule.foo', function () {})
+        ImmutableCore.method('FooModule.foo', function () {})
         // automock function should have been called
-        assert.isTrue(autoMockCalled)
+        assert.calledOnce(automock)
     })
 
-    it('should call automock wrapper function when calling method', function () {
-        // disable arg validation
-        immutable.strictArgs(false)
-        // flag set if automock function called
-        var autoMockWrapperCalled = false
-        // automock application function
-        var automock = function (method) {
-            return function (args) {
-                autoMockWrapperCalled = true
-                // call original method
-                return method(args)
-            }
-        }
+    it('should call automock wrapper function when calling method', async function () {
+        // wrapper function for foo method
+        var wrapper = sandbox.stub().returns(true)
+        // create automock stub
+        var automock = sandbox.stub().returns(wrapper)
         // set automock function
-        immutable.automock(automock)
+        ImmutableCore.automock(automock)
         // create new module with method
-        var fooModule = immutable.module('FooModule', {
-            foo: function () {},
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
         // call foo method which should call wrapper function
-        return fooModule.foo().then(function () {
-            // automock function should have been called
-            assert.isTrue(autoMockWrapperCalled)
-        })
+        var value = await fooModule.foo({bar: true})
+        // check value
+        assert.isTrue(value)
+        // check that automock called
+        assert.calledOnce(automock)
+        // check that wrapper called with method args
+        assert.calledOnce(wrapper)
+        assert.calledWithMatch(wrapper, {bar: true})
     })
 })

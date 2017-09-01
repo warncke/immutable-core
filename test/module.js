@@ -8,7 +8,7 @@ const MockLogClient = require('../mock/mock-log-client')
 // create mock cache client instance
 var mockCacheClient = new MockCacheClient()
 // create mock log client instance
-var mockLogClient = new MockLogClient
+var mockLogClient = new MockLogClient()
 
 describe('immutable-core: modules', function () {
 
@@ -21,14 +21,14 @@ describe('immutable-core: modules', function () {
         // create FooModule with no methods
         var fooModule = immutable.module('FooModule', {})
         // test name
-        assert.strictEqual(fooModule.meta().name, 'FooModule')
+        assert.strictEqual(fooModule.meta.name, 'FooModule')
     })
 
     it('module should have correct default options', function () {
         // create FooModule with no methods
         var fooModule = immutable.module('FooModule', {})
         // get module options (defaults)
-        var options = fooModule.meta().options
+        var options = fooModule.meta.options
         // test default options
         assert.strictEqual(options.cacheClient, undefined)
         assert.strictEqual(options.logClient, undefined)
@@ -43,7 +43,7 @@ describe('immutable-core: modules', function () {
             strictArgs: false,
         })
         // get module options (defaults)
-        var options = fooModule.meta().options
+        var options = fooModule.meta.options
         // test default options
         assert.strictEqual(options.cacheClient, mockCacheClient)
         assert.strictEqual(options.logClient, mockLogClient)
@@ -76,7 +76,7 @@ describe('immutable-core: modules', function () {
         // create FooModule with custom options
         var fooModule = immutable.module('FooModule', {})
         // get module options (defaults)
-        var options = fooModule.meta().options
+        var options = fooModule.meta.options
         // test default options
         assert.strictEqual(options.cacheClient, mockCacheClient)
         assert.strictEqual(options.logClient, mockLogClient)
@@ -97,11 +97,11 @@ describe('immutable-core: modules', function () {
         // create FooModule with no methods
         var fooModule = immutable.module('FooModule', {})
         // test name
-        assert.strictEqual(fooModule.meta().name, 'FooModule')
+        assert.strictEqual(fooModule.meta.name, 'FooModule')
         // create BarModule with no methods
         var barModule = immutable.module('BarModule', {})
         // test name
-        assert.strictEqual(barModule.meta().name, 'BarModule')
+        assert.strictEqual(barModule.meta.name, 'BarModule')
     })
 
     it('should allow getting module after it is created', function () {

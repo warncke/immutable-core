@@ -1,14 +1,21 @@
 'use strict'
 
-var Mockumentary = require('mockumentary')
-var Promise = require('bluebird')
-
-// create cache client mock factory with default methods
-var MockCacheClient = new Mockumentary({
-    get: ()=> Promise.resolve(null),
-    set: ()=> undefined,
-    setex: ()=> undefined,
-})
-
 /* exports */
 module.exports = MockCacheClient
+
+/**
+ * @function MockCacheClient
+ *
+ * create a new mock cache client with sinon sandbox
+ *
+ * @params {object} sandbox
+ *
+ * @returns {MockCacheClient}
+ */
+function MockCacheClient (sandbox) {
+    return {
+        get: sandbox.stub().resolves(null),
+        set: sandbox.stub().resolves(),
+        setex: sandbox.stub().resolves(),
+    }
+}
