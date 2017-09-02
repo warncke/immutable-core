@@ -1,23 +1,45 @@
 'use strict'
 
+/* npm modules */
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+const chaiSubset = require('chai-subset')
+const sinon = require('sinon')
+
+/* app modules */
+const ImmutableCore = require('../lib/immutable-core')
 const MockLogClient = require('../mock/mock-log-client')
-const assert = require('chai').assert
-const immutable = require('../lib/immutable-core')
 
-// create mock log client instance
-var mockLogClient = new MockLogClient()
+/* chai config */
+chai.use(chaiAsPromised)
+chai.use(chaiSubset)
+const assert = chai.assert
+sinon.assert.expose(chai.assert, { prefix: '' })
 
-describe('immutable-core: methods', function () {
+describe('immutable-core methods', function () {
+
+    var sandbox
+
+    var logClient
 
     beforeEach(function () {
         // reset global singleton data
-        immutable.reset()
+        ImmutableCore.reset()
+        // create sinon sandbox
+        sandbox = sinon.sandbox.create()
+        // create mock logclient
+        logClient = new MockLogClient(sandbox)
+    })
+
+    afterEach(function () {
+        // clear sinon sandbox
+        sandbox.restore()
     })
 
     it('should allow creating a new module with methods', function () {
         // create FooModule with foo method
-        var fooModule = immutable.module('FooModule', {
-            'foo': function () {},
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
         // test method
         assert.strictEqual(typeof fooModule.foo, 'function')
@@ -26,205 +48,199 @@ describe('immutable-core: methods', function () {
     })
 
     it('method should have correct meta data', function () {
+        // create foo method
+        var foo = () => true
         // create FooModule with foo method
-        var fooModule = immutable.module('FooModule', {
-            'foo': function () {},
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: foo,
         })
-        // get meta data
-        var methodMeta = fooModule.foo.meta
-        // test meta data
-        assert.strictEqual(methodMeta.logClient, undefined)
-        assert.isFunction(methodMeta.method)
-        assert.strictEqual(methodMeta.methodName, 'foo')
-        assert.strictEqual(methodMeta.moduleName, 'FooModule')
-        assert.strictEqual(methodMeta.signature, 'FooModule.foo')
-        assert.strictEqual(methodMeta.strictArgs, true)
+        // check method meta
+        assert.containSubset(fooModule.foo.meta, {
+            method: foo,
+            methodName: 'foo',
+            moduleName: 'FooModule',
+            signature: 'FooModule.foo',
+            strictArgs: true,
+        })
     })
 
     it('should use custom options from module', function () {
         // create FooModule with custom options
-        var fooModule = immutable.module('FooModule', {
-            'foo': function () {},
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         }, {
-            logClient: mockLogClient,
+            logClient: logClient,
             strictArgs: false,
         })
         // get meta data
         var methodMeta = fooModule.foo.meta
         // test meta data
-        assert.strictEqual(methodMeta.logClient, mockLogClient)
+        assert.strictEqual(methodMeta.logClient, logClient)
         assert.strictEqual(methodMeta.strictArgs, false)
     })
 
     it('should allow setting custom options', function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {})
+        var fooModule = ImmutableCore.module('FooModule', {})
         // create foo method
-        var fooMethod = immutable.method('FooModule.foo', function () {}, {
-            defaultArgs: {
-                foo: 0,
-            },
-            logClient: mockLogClient,
+        var fooMethod = ImmutableCore.method('FooModule.foo', function () {}, {
+            defaultArgs: {foo: 0},
+            logClient: logClient,
             strictArgs: false,
-            validateArgs: {
-                foo: {
-                    presence: true,
-                },
-            },
         })
-        // get meta data
-        var methodMeta = fooModule.foo.meta
-        // test meta data
-        assert.deepEqual(methodMeta.defaultArgs, {foo:0})
-        assert.strictEqual(methodMeta.logClient, mockLogClient)
-        assert.strictEqual(methodMeta.strictArgs, false)
-        assert.deepEqual(methodMeta.validateArgs, {foo:{presence: true,}})
+        // check method meta
+        assert.containSubset(fooModule.foo.meta, {
+            defaultArgs: {foo: 0},
+            logClient: logClient,
+            strictArgs: false,
+        })
     })
 
     it('should throw error on bad log client', function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {})
+        var fooModule = ImmutableCore.module('FooModule', {})
         // create foo method with bad log client
         assert.throws(() => {
-            immutable.method('FooModule.foo', function () {}, {
+            ImmutableCore.method('FooModule.foo', function () {}, {
                 logClient: function () {},
             })
-        }, Error)
+        })
     })    
 
     it('should allow creating methods one at a time', function () {
-        // create FooModule
-        var fooModule = immutable.module('FooModule', {})
         // create foo method
-        var fooMethod = immutable.method('FooModule.foo', function () {})
+        var foo = () => true
+        // create FooModule
+        var fooModule = ImmutableCore.module('FooModule', {})
+        // create foo method
+        var fooMethod = ImmutableCore.method('FooModule.foo', foo)
         // test that function created
         assert.strictEqual(typeof fooMethod, 'function')
-        // get meta data
-        var methodMeta = fooMethod.meta
-        // test meta data
-        assert.strictEqual(methodMeta.logClient, undefined)
-        assert.isFunction(methodMeta.method)
-        assert.strictEqual(methodMeta.methodName, 'foo')
-        assert.strictEqual(methodMeta.moduleName, 'FooModule')
-        assert.strictEqual(methodMeta.signature, 'FooModule.foo')
-        assert.strictEqual(methodMeta.strictArgs, true)
+        // check method meta
+        assert.containSubset(fooModule.foo.meta, {
+            method: foo,
+            methodName: 'foo',
+            moduleName: 'FooModule',
+            signature: 'FooModule.foo',
+            strictArgs: true,
+        })
     })
 
     it('should allow creating multiple methods', function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {})
+        var fooModule = ImmutableCore.module('FooModule', {})
         // create foo method
-        var fooMethod = immutable.method('FooModule.foo', function () {})
+        var fooMethod = ImmutableCore.method('FooModule.foo', () => true)
         // test that function created
         assert.strictEqual(typeof fooMethod, 'function')
         // create bar method
-        var barMethod = immutable.method('FooModule.bar', function () {})
+        var barMethod = ImmutableCore.method('FooModule.bar', () => true)
         // test that function created
         assert.strictEqual(typeof barMethod, 'function')
     })
 
     it('should allow getting method after it is created', function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {})
+        var fooModule = ImmutableCore.module('FooModule', {})
         // create foo method
-        var fooMethod = immutable.method('FooModule.foo', function () {})
+        var fooMethod = ImmutableCore.method('FooModule.foo', () => true)
         // create bar method
-        var barMethod = immutable.method('FooModule.bar', function () {})
+        var barMethod = ImmutableCore.method('FooModule.bar', () => true)
         // test get module
-        assert.strictEqual(immutable.method('FooModule.foo'), fooMethod)
-        assert.strictEqual(immutable.method('FooModule.bar'), barMethod)
+        assert.strictEqual(ImmutableCore.method('FooModule.foo'), fooMethod)
+        assert.strictEqual(ImmutableCore.method('FooModule.bar'), barMethod)
     })
 
     it('should throw an error when trying to redefine a method', function () {
         // create FooModule with no methods
-        immutable.module('FooModule', {})
+        ImmutableCore.module('FooModule', {})
         // create foo method
-        var fooMethod = immutable.method('FooModule.foo', function () {})
+        var fooMethod = ImmutableCore.method('FooModule.foo', () => true)
         // attempt to create foo method again
-        assert.throws(() => immutable.method('FooModule.foo', function () {}), Error)
+        assert.throws(() => ImmutableCore.method('FooModule.foo', () => true))
     })
 
     it('should not throw an error when trying to redefine a method and global allow override set', function () {
         // allow redefining modules/methods
-        immutable.allowOverride(true)
+        ImmutableCore.allowOverride(true)
         // create FooModule with no methods
-        immutable.module('FooModule', {})
+        ImmutableCore.module('FooModule', {})
         // create foo method
-        var fooMethod = immutable.method('FooModule.foo', function () {})
+        var fooMethod = ImmutableCore.method('FooModule.foo', () => true)
         // attempt to create foo method again
-        assert.doesNotThrow(() => immutable.method('FooModule.foo', function () {}), Error)
+        assert.doesNotThrow(() => ImmutableCore.method('FooModule.foo', () => true))
     })
 
     it('should not throw an error when trying to redefine a method and module allow override set', function () {
         // create FooModule with no methods
-        immutable.module('FooModule', {}, {allowOverride: true})
+        ImmutableCore.module('FooModule', {}, {allowOverride: true})
         // create foo method
-        var fooMethod = immutable.method('FooModule.foo', function () {})
+        var fooMethod = ImmutableCore.method('FooModule.foo', () => true)
         // attempt to create foo method again
-        assert.doesNotThrow(() => immutable.method('FooModule.foo', function () {}), Error)
+        assert.doesNotThrow(() => ImmutableCore.method('FooModule.foo', () => true))
     })
 
     it('should not throw an error when trying to redefine a method and method allow override set', function () {
         // create FooModule with no methods
-        immutable.module('FooModule', {})
+        ImmutableCore.module('FooModule', {})
         // create foo method
-        var fooMethod = immutable.method('FooModule.foo', function () {})
+        var fooMethod = ImmutableCore.method('FooModule.foo', () => true)
         // attempt to create foo method again
-        assert.doesNotThrow(() => immutable.method('FooModule.foo', function () {}, {allowOverride: true}), Error)
+        assert.doesNotThrow(() => ImmutableCore.method('FooModule.foo', () => true, {allowOverride: true}))
     })
 
     it('should throw an error when trying to get an undefined method', function () {
         // create FooModule with no methods
-        immutable.module('FooModule', {})
+        ImmutableCore.module('FooModule', {})
         // attempt to get undefined module
-        assert.throws(() => immutable.method('FooModule.foo'), Error)
+        assert.throws(() => ImmutableCore.method('FooModule.foo'))
     })
 
     it('should throw an error when passing invalid options', function () {
         // create FooModule with no methods
-        immutable.module('FooModule', {})
+        ImmutableCore.module('FooModule', {})
         // attempt to create method with invalid options
-        assert.throws(() => immutable.method('FooModule.foo', function () {}, 0), Error)
+        assert.throws(() => ImmutableCore.method('FooModule.foo', () => true, 0))
     })
 
     it('should throw an error when creating module with invalid method', function () {
         // create FooModule with no methods
-        immutable.module('FooModule', {})
+        ImmutableCore.module('FooModule', {})
         // attempt to create methow with invalid method
-        assert.throws(() => immutable.method('FooModule.foo', null), Error)
-        assert.throws(() => immutable.method('FooModule.foo', {}), Error)
+        assert.throws(() => ImmutableCore.method('FooModule.foo', null))
+        assert.throws(() => ImmutableCore.method('FooModule.foo', {}))
     })
 
     it('should throw an error when creating module with invalid name', function () {
         // create FooModule with no methods
-        immutable.module('FooModule', {})
+        ImmutableCore.module('FooModule', {})
         // attempt to create methow with invalid name
-        assert.throws(() => immutable.method('', function () {}), Error)
-        assert.throws(() => immutable.method(0, function () {}), Error)
-        assert.throws(() => immutable.method('FooModule.method', function () {}), Error)
-        assert.throws(() => immutable.method('FooModule.foo.bar', function () {}), Error)
+        assert.throws(() => ImmutableCore.method('', () => true))
+        assert.throws(() => ImmutableCore.method(0, () => true))
+        assert.throws(() => ImmutableCore.method('FooModule.method', () => true))
+        assert.throws(() => ImmutableCore.method('FooModule.foo.bar', () => true))
     })
 
     it('should check if method exists', function () {
         // create FooModule with foo method
-        var fooModule = immutable.module('FooModule', {
-            'foo': function () {},
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
         // check if method exists
-        assert.isTrue(immutable.hasMethod('FooModule.foo'))
+        assert.isTrue(ImmutableCore.hasMethod('FooModule.foo'))
     })
 
     it('should check if method does not exists', function () {
         // create FooModule with foo method
-        var fooModule = immutable.module('FooModule', {
-            'foo': function () {},
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
         // check if method exists
-        assert.isFalse(immutable.hasMethod('FooModule.bar'))
+        assert.isFalse(ImmutableCore.hasMethod('FooModule.bar'))
     })
 
     it('should throw error when checking if invalid method signature exists', function () {
         // check if invalid method signature exists
-        assert.throws(() => immutable.hasMethod(''), Error)
+        assert.throws(() => ImmutableCore.hasMethod(''))
     })
 })

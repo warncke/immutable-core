@@ -9,6 +9,9 @@ which are plain functions.
 Every Immutable method takes a single plain object for arguments and returns
 a Promise.
 
+Each Immutable Module may have a shared immutable global data state that cannot
+be modified but can be replaced.
+
 Immutable Core provides a framework for defining modules and methods, logging
 and caching method calls, and binding method calls to execute either before
 or after other methods.
@@ -17,6 +20,26 @@ or after other methods.
 
 Immutable Core requires Node.js v7.6.0 or greater with native async/await
 support.
+
+## Version 2.0.0
+
+Version 2.0.0 of Immutable Core is a major release with significant new
+features and a few major breaking changes.
+
+### Breaking Changes
+
+* after return data will replace instead of merge if not object
+* `cacheId` for cached data changed to `_cached`
+* stack entry for bound methods now appends ,bindType,bindSignature
+* change from uglify-js to uglify-es for normalizing functions
+
+### New Features
+
+* `freeze` calls Object.freeze on args - enabled by defaault except in prod
+* `resolve` deep resolves promises in args/return - enabled by default
+* `freezeData` calls Object.freeze on module data - enabled by default
+* `with` bind type executes at same time with same args and merges results
+* `withDetach` bind type executes the same as `with` but does not block
 
 ## Using Immutable Core
 

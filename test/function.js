@@ -1,24 +1,40 @@
 'use strict'
 
-const MockLogClient = require('../mock/mock-log-client')
-const assert = require('chai').assert
-const immutable = require('../lib/immutable-core')
+/* npm modules */
+const chai = require('chai')
+const sinon = require('sinon')
 
-// create mock log client instance
-var mockLogClient = new MockLogClient()
+/* app modules */
+const ImmutableCore = require('../lib/immutable-core')
+const MockLogClient = require('../mock/mock-log-client')
+
+/* chai config */
+const assert = chai.assert
+sinon.assert.expose(chai.assert, { prefix: '' })
 
 describe('immutable-core: functions', function () {
 
+    var sandbox
+
+    var logClient
+
     beforeEach(function () {
         // reset global singleton data
-        immutable.reset()
+        ImmutableCore.reset()
+        // create sinon sandbox
+        sandbox = sinon.sandbox.create()
+        // create mock logclient
+        logClient = new MockLogClient(sandbox)
+    })
+
+    afterEach(function () {
+        // clear sinon sandbox
+        sandbox.restore()
     })
 
     it('should allow function to be defined', function () {
         // create new function
-        var foo = immutable.function('foo', function (x) {
-            return x
-        })
+        var foo = ImmutableCore.function('foo', x => x)
         // foo should be a function
         assert.isFunction(foo)
         // foo should return the value it is called with
@@ -27,7 +43,7 @@ describe('immutable-core: functions', function () {
 
     it('should attach meta to function', function () {
         // create new function
-        var foo = immutable.function('foo', function (x) {
+        var foo = ImmutableCore.function('foo', function (x) {
             // comments should be ignored
             if (x) {
                 try {
@@ -51,58 +67,38 @@ describe('immutable-core: functions', function () {
     it('should throw error on native function', function () {
         assert.throws(function () {
             // creating new function from native should throw error
-            var foo = immutable.function('foo', Array.isArray)
+            var foo = ImmutableCore.function('foo', Array.isArray)
         })
     })
 
     it('should throw error when attempting to redefine function', function () {
         // create new function
-        var foo = immutable.function('foo', function (x) {
-            return x
-        })
-        assert.throws(function () {
-            // redefining function should fail
-            foo = immutable.function('foo', function (x) {
-                return x
-            })
-        })
+        var foo = ImmutableCore.function('foo', x => x)
+        // redefining function should fail
+        assert.throws(() => ImmutableCore.function('foo', x => x))
     })
 
     it('should redefine function with local allowOverride', function () {
         // create new function
-        var foo = immutable.function('foo', function (x) {
-            return x
-        })
-        assert.doesNotThrow(function () {
-            // redefining function should fail
-            foo = immutable.function('foo', function (x) {
-                return x
-            }, {allowOverride: true})
-        })
+        var foo = ImmutableCore.function('foo', x => x)
+        // redefining function should fail
+        assert.doesNotThrow(() => ImmutableCore.function('foo', x => x, {allowOverride: true}))
     })
 
     it('should redefine function with global allowOverride', function () {
         // set global allowOverride
-        immutable.allowOverride(true)
+        ImmutableCore.allowOverride(true)
         // create new function
-        var foo = immutable.function('foo', function (x) {
-            return x
-        })
-        assert.doesNotThrow(function () {
-            // redefining function should fail
-            foo = immutable.function('foo', function (x) {
-                return x
-            })
-        })
+        var foo = ImmutableCore.function('foo', x => x)
+        // redefining function should fail
+        assert.doesNotThrow(() => ImmutableCore.function('foo', x => x))
     })
 
     it('should return existing function if not defining', function () {
         // create new function
-        immutable.function('foo', function (x) {
-            return x
-        })
+        var foo = ImmutableCore.function('foo', x => x)
         // get function
-        var foo = immutable.function('foo')
+        var foo = ImmutableCore.function('foo')
         // foo should be a function
         assert.isFunction(foo)
         // foo should return the value it is called with
@@ -110,82 +106,53 @@ describe('immutable-core: functions', function () {
     })
 
     it('should throw error getting non-existent function', function () {
-        assert.throws(function () {
-            // getting non-existent function should throw
-            foo = immutable.function('foo', function (x) {
-                return x
-            })
-        })
+        assert.throws(() => ImmutableCore.function('foo'))
     })
 
     it('should have defined function', function () {
         // create new function
-        immutable.function('foo', function (x) {
-            return x
-        })
-        assert.isTrue(immutable.hasFunction('foo'))
+        var foo = ImmutableCore.function('foo', x => x)
+        // check if function defined
+        assert.isTrue(ImmutableCore.hasFunction('foo'))
     })
 
     it('should not have non-existent function', function () {
-        assert.isFalse(immutable.hasFunction('foo'))
+        // check if function defined
+        assert.isFalse(ImmutableCore.hasFunction('foo'))
     })
 
     it('should log function call and result', function () {
-        var logged
-        // create mock log client to test logging
-        var mockLogClient = new MockLogClient({
-            log: function (type, data) {
-                // check log type
-                assert.strictEqual(type, 'functionCall')
-                // set logged data for checking
-                logged = data
-            }
-        })
         // set log client globally
-        immutable.logClient(mockLogClient)
+        ImmutableCore.logClient(logClient)
         // create new function
-        var foo = immutable.function('foo', function (x) {
-            return x
-        })
+        var foo = ImmutableCore.function('foo', x => x)
         // calling function should log
         foo(1)
         // check logged value
-        assert.deepEqual(logged, {
+        assert.calledOnce(logClient.log)
+        assert.calledWithMatch(logClient.log, 'functionCall', {
             functionName: 'foo',
             args: [ 1 ],
             res: 1,
             isError: false,
-            moduleCallId: undefined,
-            requestId: undefined 
         })
     })
 
     it('should log extra data when called with session', function () {
-        var logged
         // fake session with variables that will be logged
         var fakeSession = {
             moduleCallId: 'FOO',
             requestId: 'BAR',
         }
-        // create mock log client to test logging
-        var mockLogClient = new MockLogClient({
-            log: function (type, data) {
-                // check log type
-                assert.strictEqual(type, 'functionCall')
-                // set logged data for checking
-                logged = data
-            }
-        })
         // set log client globally
-        immutable.logClient(mockLogClient)
+        ImmutableCore.logClient(logClient)
         // create new function
-        var foo = immutable.function('foo', function (x) {
-            return x
-        })
+        var foo = ImmutableCore.function('foo', x => x)
         // calling function should log
         foo.call(fakeSession, 1)
         // check logged value
-        assert.deepEqual(logged, {
+        assert.calledOnce(logClient.log)
+        assert.calledWithMatch(logClient.log, 'functionCall', {
             functionName: 'foo',
             args: [ 1 ],
             res: 1,

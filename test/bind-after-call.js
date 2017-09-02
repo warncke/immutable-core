@@ -86,102 +86,126 @@ describe('immutable-core bind after detached method call', function () {
         assert.containSubset(res, {foo: true, bar: true})
     })
 
-    it('should have correct stack', function () {
+    it('bound after method should have correct stack', async function () {
+        // create stubs for bar and foo
+        var bar = sandbox.stub().resolves()
+        var foo = sandbox.stub().resolves()
         // create FooModule
         var fooModule = ImmutableCore.module('FooModule', {
-            // foo method returns valid Promise
-            foo: function (args) {
-                // validate stack
-                assert.deepEqual(args.session.stack, ['FooModule.foo'])
-            },
+            foo: foo,
         })
         // create BarModule
         var barModule = ImmutableCore.module('BarModule', {
-            bar: function (args) {
-                // validate stack
-                assert.deepEqual(args.session.stack, ['FooModule.foo', 'BarModule.bar'])
-            },
+            bar: bar,
         })
         // bind bar after foo
         ImmutableCore.after('FooModule.foo', barModule.bar)
         // test method call
-        return fooModule.foo()
+        await fooModule.foo()
+        // check stack for foo
+        assert.calledWithMatch(foo, {session: {stack: [
+            'FooModule.foo'
+        ]}})
+        // check stack for bar
+        assert.calledWithMatch(bar, {session: {stack: [
+            'FooModule.foo',
+            'BarModule.bar,after,FooModule.foo',
+        ]}})
     })
 
-    it('bound after method should have correct args', function () {
-        // capture args to test
-        var captureArgs
+    it('bound after method should have correct args', async function () {
+        // create stubs for bar and foo
+        var bar = sandbox.stub().resolves(true)
+        var foo = sandbox.stub().resolves(true)
         // create FooModule
         var fooModule = ImmutableCore.module('FooModule', {
-            // foo method returns valid Promise
-            foo: function (args) {
-                // capture args
-                captureArgs = args
-                return Promise.resolve(true)
-            },
+            foo: foo,
         })
         // create BarModule
         var barModule = ImmutableCore.module('BarModule', {
-            // bar method returns valid Promise
-            bar: function (args) {
-                // args for after should contain args for bound method
-                assert.deepEqual(args.args, captureArgs)
-                // args for after should have return from bound method
-                assert.strictEqual(args.res, true)
-                // args for single after should have no origRes
-                assert.strictEqual(args.origRes, undefined)
-            },
+            bar: bar,
         })
         // bind bar after foo
         ImmutableCore.after('FooModule.foo', barModule.bar)
         // test method call
-        return fooModule.foo()
-        // test resolve value
-        .then(res => {
-            assert.strictEqual(res, true)
+        await fooModule.foo({foo: true})
+        // get args from first call
+        var args = foo.getCall(0).args[0]
+        // check args
+        assert.calledWithMatch(bar, {
+            args: args,
+            origRes: undefined,
+            res: true,
         })
     })
 
-    it('second bound after method should have correct args', function () {
-        // capture args to test
-        var captureArgs
+    it('second bound after method should have correct args', async function () {
+        // create stubs for bar and foo
+        var bar = sandbox.stub().resolves(false)
+        var bam = sandbox.stub().resolves(1)
+        var foo = sandbox.stub().resolves(true)
         // create FooModule
         var fooModule = ImmutableCore.module('FooModule', {
-            // foo method returns valid Promise
-            foo: function (args) {
-                // capture args
-                captureArgs = args
-                return Promise.resolve(true)
-            },
+            foo: foo,
         })
         // create BarModule
         var barModule = ImmutableCore.module('BarModule', {
-            // bar method returns valid Promise
-            bar: function (args) {
-                return Promise.resolve(false)
-            },
+            bar: bar,
         })
         // create BamModule
         var bamModule = ImmutableCore.module('BamModule', {
-            // bar method returns valid Promise
-            bam: function (args) {
-                // args for after should contain args for bound method
-                assert.deepEqual(args.args, captureArgs)
-                // args for after should have return from bound method
-                assert.strictEqual(args.res, false)
-                // args for chained after should have original return
-                assert.strictEqual(args.origRes, true)
-            },
+            bam: bam,
         })
         // bind bar after foo
         ImmutableCore.after('FooModule.foo', barModule.bar)
         // bind bam after bar
         ImmutableCore.after('BarModule.bar', bamModule.bam)
         // test method call
-        return fooModule.foo()
+        var res = await fooModule.foo()
         // test resolve value
-        .then(res => {
-            assert.strictEqual(res, true)
+        assert.strictEqual(res, 1)
+        // get args from first call
+        var args = foo.getCall(0).args[0]
+        // check args
+        assert.calledWithMatch(bam, {
+            args: args,
+            origRes: true,
+            res: false,
+        })
+    })
+
+    it('second bound after method should have correct stack', async function () {
+        // create stubs for bar and foo
+        var bar = sandbox.stub().resolves(false)
+        var bam = sandbox.stub().resolves(1)
+        var foo = sandbox.stub().resolves(true)
+        // create FooModule
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: foo,
+        })
+        // create BarModule
+        var barModule = ImmutableCore.module('BarModule', {
+            bar: bar,
+        })
+        // create BamModule
+        var bamModule = ImmutableCore.module('BamModule', {
+            bam: bam,
+        })
+        // bind bar after foo
+        ImmutableCore.after('FooModule.foo', barModule.bar)
+        // bind bam after bar
+        ImmutableCore.after('BarModule.bar', bamModule.bam)
+        // test method call
+        var res = await fooModule.foo()
+        // check args
+        assert.calledWithMatch(bam, {
+            session: {
+                stack: [
+                    'FooModule.foo',
+                    'BarModule.bar,after,FooModule.foo',
+                    'BamModule.bam,after,BarModule.bar',
+                ],
+            },
         })
     })
 

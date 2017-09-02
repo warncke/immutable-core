@@ -1,7 +1,6 @@
 'use strict'
 
 /* npm modules */
-const Promise = require('bluebird')
 const chai = require('chai')
 const sinon = require('sinon')
 
@@ -174,6 +173,24 @@ describe('immutable-core cache', function () {
         var value = await fooModule.foo()
         // verify returned value
         assert.strictEqual(value, false)
+    })
+
+    it('should set _cached property on returned object', async function () {
+        // create FooModule
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
+        })
+        // add cache to foo with cache client
+        ImmutableCore.cache('FooModule.foo', {cacheClient: cacheClient})
+        // set cache to return false value
+        cacheClient.get.resolves({foo: true})
+        // call foo which should call get and set
+        var value = await fooModule.foo()
+        // verify returned value
+        assert.deepEqual(value, {
+            _cached: '7719df2a5745eaf3127112fb1e9ee176',
+            foo: true,
+        })
     })
 
     it('should call original method if cache client returns rejected promise', async function () {

@@ -1,165 +1,208 @@
 'use strict'
 
-const assert = require('chai').assert
-const immutable = require('../lib/immutable-core')
-const MockCacheClient = require('../mock/mock-cache-client')
+/* npm modules */
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+const chaiSubset = require('chai-subset')
+const sinon = require('sinon')
+
+/* app modules */
+const ImmutableCore = require('../lib/immutable-core')
 const MockLogClient = require('../mock/mock-log-client')
+const MockCacheClient = require('../mock/mock-cache-client')
 
-// create mock cache client instance
-var mockCacheClient = new MockCacheClient()
-// create mock log client instance
-var mockLogClient = new MockLogClient()
+/* chai config */
+chai.use(chaiAsPromised)
+chai.use(chaiSubset)
+const assert = chai.assert
+sinon.assert.expose(chai.assert, { prefix: '' })
 
-describe('immutable-core: modules', function () {
+describe('immutable-core modules', function () {
+
+    var sandbox
+
+    var cacheClient, logClient
 
     beforeEach(function () {
         // reset global singleton data
-        immutable.reset()
+        ImmutableCore.reset()
+        // create sinon sandbox
+        sandbox = sinon.sandbox.create()
+        // create mock log client
+        logClient = new MockLogClient(sandbox)
+        // create mock cache client
+        cacheClient = new MockCacheClient(sandbox)
+    })
+
+    afterEach(function () {
+        // clear sinon sandbox
+        sandbox.restore()
     })
 
     it('should allow creating a new module without any methods', function () {
         // create FooModule with no methods
-        var fooModule = immutable.module('FooModule', {})
+        var fooModule = ImmutableCore.module('FooModule', {})
         // test name
         assert.strictEqual(fooModule.meta.name, 'FooModule')
     })
 
     it('module should have correct default options', function () {
         // create FooModule with no methods
-        var fooModule = immutable.module('FooModule', {})
-        // get module options (defaults)
-        var options = fooModule.meta.options
+        var fooModule = ImmutableCore.module('FooModule', {})
         // test default options
-        assert.strictEqual(options.cacheClient, undefined)
-        assert.strictEqual(options.logClient, undefined)
-        assert.strictEqual(options.strictArgs, true)
+        assert.containSubset(fooModule.meta.options, {
+            allowOverride: false,
+            automock: undefined,
+            cacheClient: undefined,
+            freezeData: true,
+            immutableAI: true,
+            logClient: undefined,
+            resolve: true,
+            strictArgs: true,
+        })
     })
 
     it('should allow setting custom options', function () {
         // create FooModule with custom options
-        var fooModule = immutable.module('FooModule', {}, {
-            cacheClient: mockCacheClient,
-            logClient: mockLogClient,
+        var fooModule = ImmutableCore.module('FooModule', {}, {
+            allowOverride: true,
+            cacheClient: cacheClient,
+            freezeData: false,
+            immutableAI: false,
+            logClient: logClient,
+            resolve: false,
             strictArgs: false,
         })
-        // get module options (defaults)
-        var options = fooModule.meta.options
         // test default options
-        assert.strictEqual(options.cacheClient, mockCacheClient)
-        assert.strictEqual(options.logClient, mockLogClient)
-        assert.strictEqual(options.strictArgs, false)
+        assert.containSubset(fooModule.meta.options, {
+            allowOverride: true,
+            cacheClient: cacheClient,
+            freezeData: false,
+            immutableAI: false,
+            logClient: logClient,
+            resolve: false,
+            strictArgs: false,
+        })
     })
 
     it('should throw error on invalid cache client option', function () {
         // create FooModule with bad cache client
         assert.throws(() => {
-            immutable.module('FooModule', {}, {
-                cacheClient: function () {},
+            ImmutableCore.module('FooModule', {}, {
+                cacheClient: () => true,
             })
-        }, Error)
+        })
     })
 
     it('should throw error on invalid log client option', function () {
         // create FooModule with bad cache client
         assert.throws(() => {
-            immutable.module('FooModule', {}, {
-                logClient: function () {},
+            ImmutableCore.module('FooModule', {}, {
+                logClient: () => true,
             })
-        }, Error)
+        })
     })
 
     it('should allow setting custom options', function () {
         // set defaults
-        immutable.cacheClient(mockCacheClient)
-        immutable.logClient(mockLogClient)
-        immutable.strictArgs(false)
+        ImmutableCore.allowOverride(true)
+        ImmutableCore.cacheClient(cacheClient)
+        ImmutableCore.freezeData(false)
+        ImmutableCore.immutableAI(false)
+        ImmutableCore.logClient(logClient)
+        ImmutableCore.resolve(false)
+        ImmutableCore.strictArgs(false)
         // create FooModule with custom options
-        var fooModule = immutable.module('FooModule', {})
-        // get module options (defaults)
-        var options = fooModule.meta.options
+        var fooModule = ImmutableCore.module('FooModule', {})
         // test default options
-        assert.strictEqual(options.cacheClient, mockCacheClient)
-        assert.strictEqual(options.logClient, mockLogClient)
-        assert.strictEqual(options.strictArgs, false)
+        assert.containSubset(fooModule.meta.options, {
+            allowOverride: true,
+            cacheClient: cacheClient,
+            freezeData: false,
+            immutableAI: false,
+            logClient: logClient,
+            resolve: false,
+            strictArgs: false,
+        })
     })
 
     it('should throw error on invalid cache client default', function () {
         // attempt to set bad cache client default
-        assert.throws(() => immutable.cacheClient(function () {}), Error)
+        assert.throws(() => ImmutableCore.cacheClient(() => true))
     })
 
     it('should throw error on invalid log client default', function () {
         // attempt to set bad log client default
-        assert.throws(() => immutable.logClient(function () {}), Error)
+        assert.throws(() => ImmutableCore.logClient(() => true))
     })
 
     it('should allow creating multiple modules', function () {
         // create FooModule with no methods
-        var fooModule = immutable.module('FooModule', {})
+        var fooModule = ImmutableCore.module('FooModule', {})
         // test name
         assert.strictEqual(fooModule.meta.name, 'FooModule')
         // create BarModule with no methods
-        var barModule = immutable.module('BarModule', {})
+        var barModule = ImmutableCore.module('BarModule', {})
         // test name
         assert.strictEqual(barModule.meta.name, 'BarModule')
     })
 
     it('should allow getting module after it is created', function () {
         // create FooModule with no methods
-        var fooModule = immutable.module('FooModule', {})
+        var fooModule = ImmutableCore.module('FooModule', {})
         // create BarModule with no methods
-        var barModule = immutable.module('BarModule', {})
+        var barModule = ImmutableCore.module('BarModule', {})
         // test get module
-        assert.strictEqual(immutable.module('FooModule'), fooModule)
-        assert.strictEqual(immutable.module('BarModule'), barModule)
+        assert.strictEqual(ImmutableCore.module('FooModule'), fooModule)
+        assert.strictEqual(ImmutableCore.module('BarModule'), barModule)
     })
 
     it('should throw an error when trying to redefine a module', function () {
         // create FooModule with no methods
-        immutable.module('FooModule', {})
+        ImmutableCore.module('FooModule', {})
         // attempt to create moudle again
-        assert.throws(() => immutable.module('FooModule', {}), Error)
+        assert.throws(() => ImmutableCore.module('FooModule', {}))
     })
 
     it('should not throw an error when trying to redefine a module and allowOverride set', function () {
         // create FooModule with no methods
-        immutable.module('FooModule', {})
+        ImmutableCore.module('FooModule', {})
         // attempt to create moudle again
-        assert.doesNotThrow(() => immutable.module('FooModule', {}, {allowOverride: true}), Error)
+        assert.doesNotThrow(() => ImmutableCore.module('FooModule', {}, {allowOverride: true}))
     })
 
     it('should throw an error when trying to get an undefined module', function () {
         // attempt to get undefined module
-        assert.throws(() => immutable.module('FooModule'), Error)
+        assert.throws(() => ImmutableCore.module('FooModule'))
     })
 
     it('should throw an error when passing invalid options', function () {
         // attempt to create module with invalid options
-        assert.throws(() => immutable.module('FooModule', {}, 0), Error)
+        assert.throws(() => ImmutableCore.module('FooModule', {}, 0))
     })
 
     it('should throw an error when creating module with invalid name', function () {
         // attempt to create module with invalid name
-        assert.throws(() => immutable.module('', {}), Error)
-        assert.throws(() => immutable.module(0, {}), Error)
-        assert.throws(() => immutable.module('module', {}), Error)
-        assert.throws(() => immutable.module('Foo.Bar', {}), Error)
+        assert.throws(() => ImmutableCore.module('', {}))
+        assert.throws(() => ImmutableCore.module(0, {}))
+        assert.throws(() => ImmutableCore.module('module', {}))
+        assert.throws(() => ImmutableCore.module('Foo.Bar', {}))
     })
 
     it('should test if module exists', function () {
         // create FooModule with no methods
-        immutable.module('FooModule', {})
+        ImmutableCore.module('FooModule', {})
         // check that module exists
-        assert.isTrue(immutable.hasModule('FooModule'))
+        assert.isTrue(ImmutableCore.hasModule('FooModule'))
     })
 
     it('should test if module does not exist', function () {
         // check that module does not exist
-        assert.isFalse(immutable.hasModule('FooModule'))
+        assert.isFalse(ImmutableCore.hasModule('FooModule'))
     })
 
     it('should throw error when checking if invalid name exists', function () {
         // attempt to check if invalid name exists
-        assert.throws(() => immutable.hasModule(''), Error)
+        assert.throws(() => ImmutableCore.hasModule(''))
     })
 })

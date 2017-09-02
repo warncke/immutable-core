@@ -1,38 +1,51 @@
 'use strict'
 
+/* npm modules */
 const Promise = require('bluebird')
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
-const immutable = require('../lib/immutable-core')
+const chaiSubset = require('chai-subset')
+const sinon = require('sinon')
 
+/* application modules */
+const ImmutableCore = require('../lib/immutable-core')
+
+/* chai config */
 chai.use(chaiAsPromised)
+chai.use(chaiSubset)
 const assert = chai.assert
+sinon.assert.expose(chai.assert, { prefix: '' })
 
-describe('immutable-core: immutable ai', function () {
+describe('immutable-core immutable ai', function () {
 
-    // fake session to use for testing
-    var session = {
-        sessionId: '11111111111111111111111111111111',
-    }
+    var sandbox, session
 
     beforeEach(function () {
         // reset global singleton data
-        immutable.reset()
+        ImmutableCore.reset().strictArgs(false)
+        // create sinon sandbox
+        sandbox = sinon.sandbox.create()
+        // fake session to use for testing
+        session = {
+            sessionId: '11111111111111111111111111111111',
+        }
+    })
+
+    afterEach(function () {
+        // clear sinon sandbox
+        sandbox.restore()
     })
 
     it('should pass session when calling with no args', async function () {
+        // create bar stub
+        var bar = sandbox.stub().resolves('bar')
         // create barModule
-        var barModule = immutable.module('barModule', {
-            bar: function (args) {
-                // check that session passed
-                assert.strictEqual(args.session.sessionId, session.sessionId)
-                // return value to check
-                return 'bar'
-            },
+        var barModule = ImmutableCore.module('barModule', {
+            bar: bar,
         })
         // create FooModule
-        var fooModule = immutable.module('fooModule', {
-            foo: function (args) {
+        var fooModule = ImmutableCore.module('fooModule', {
+            foo: function () {
                 return this.module.bar.bar()
             },
         })
@@ -40,44 +53,47 @@ describe('immutable-core: immutable ai', function () {
         var ret = await fooModule.foo({session: session})
         // test returned value
         assert.strictEqual(ret, 'bar')
+        // test that bar called with session
+        assert.calledOnce(bar)
+        assert.calledWithMatch(bar, {
+            session: session,
+        })
     })
 
     it('should pass session when calling with args', async function () {
+        // create bar stub
+        var bar = sandbox.stub().resolves('bar')
         // create barModule
-        var barModule = immutable.module('barModule', {
-            bar: function (args) {
-                // check that session passed
-                assert.strictEqual(args.session.sessionId, session.sessionId)
-                // check args
-                assert.strictEqual(args.foo, 'foo')
-                // return value to check
-                return 'bar'
-            },
+        var barModule = ImmutableCore.module('barModule', {
+            bar: bar,
         })
         // create FooModule
-        var fooModule = immutable.module('fooModule', {
-            foo: function (args) {
-                return this.module.bar.bar({foo: 'foo'})
+        var fooModule = ImmutableCore.module('fooModule', {
+            foo: function () {
+                return this.module.bar.bar({foo: true})
             },
         })
         // test method call
         var ret = await fooModule.foo({session: session})
         // test returned value
         assert.strictEqual(ret, 'bar')
+        // test that bar called with session
+        assert.calledOnce(bar)
+        assert.calledWithMatch(bar, {
+            foo: true,
+            session: session,
+        })
     })
 
     it('should work with Controller namespace', async function () {
+        // create bar stub
+        var bar = sandbox.stub().resolves('bar')
         // create barController
-        var barModule = immutable.module('barController', {
-            bar: function (args) {
-                // check that session passed
-                assert.strictEqual(args.session.sessionId, session.sessionId)
-                // return value to check
-                return 'bar'
-            },
+        var barModule = ImmutableCore.module('barController', {
+            bar: bar,
         })
         // create FooModule
-        var fooModule = immutable.module('fooModule', {
+        var fooModule = ImmutableCore.module('fooModule', {
             foo: function (args) {
                 return this.controller.bar.bar()
             },
@@ -86,13 +102,18 @@ describe('immutable-core: immutable ai', function () {
         var ret = await fooModule.foo({session: session})
         // test returned value
         assert.strictEqual(ret, 'bar')
+        // test that bar called with session
+        assert.calledOnce(bar)
+        assert.calledWithMatch(bar, {
+            session: session,
+        })
     })
 
     it('should disable immutableAI globally', async function () {
         // disable globally
-        immutable.immutableAI(false)
+        ImmutableCore.immutableAI(false)
         // create FooModule
-        var fooModule = immutable.module('fooModule', {
+        var fooModule = ImmutableCore.module('fooModule', {
             foo: function (args) {
                 // this should not be function
                 assert.notStrictEqual(typeof this, 'function')
@@ -106,7 +127,7 @@ describe('immutable-core: immutable ai', function () {
 
     it('should disable immutableAI at module level', async function () {
         // create FooModule
-        var fooModule = immutable.module('fooModule', {
+        var fooModule = ImmutableCore.module('fooModule', {
             foo: function (args) {
                 // this should not be function
                 assert.notStrictEqual(typeof this, 'function')
@@ -122,9 +143,9 @@ describe('immutable-core: immutable ai', function () {
 
     it('should disable immutableAI at method level', async function () {
         // create FooModule
-        var fooModule = immutable.module('fooModule', {})
+        var fooModule = ImmutableCore.module('fooModule', {})
         // create foo method
-        var fooMethod = immutable.method('fooModule.foo', function (args) {
+        var fooMethod = ImmutableCore.method('fooModule.foo', function (args) {
             // this should not be function
             assert.notStrictEqual(typeof this, 'function')
         }, {immutableAI: false})

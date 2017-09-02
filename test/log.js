@@ -1,120 +1,90 @@
 'use strict'
 
-const MockLogClient = require('../mock/mock-log-client')
-const Promise = require('bluebird')
-const assert = require('chai').assert
-const immutable = require('../lib/immutable-core')
+/* npm modules */
+const chai = require('chai')
+const chaiSubset = require('chai-subset')
+const sinon = require('sinon')
 
-describe('immutable-core: log', function () {
+/* app modules */
+const ImmutableCore = require('../lib/immutable-core')
+const MockLogClient = require('../mock/mock-log-client')
+
+/* chai config */
+chai.use(chaiSubset)
+const assert = chai.assert
+sinon.assert.expose(chai.assert, { prefix: '' })
+
+describe('immutable-core log', function () {
+
+    var sandbox
+
+    var logClient
 
     beforeEach(function () {
         // reset global singleton data
-        immutable.reset()
+        ImmutableCore.reset().strictArgs(false)
+        // create sinon sandbox
+        sandbox = sinon.sandbox.create()
+        // create mock logclient
+        logClient = new MockLogClient(sandbox)
+        // set global log client
+        ImmutableCore.logClient(logClient)
     })
 
-    it('should allow setting default log client', function () {
-        // capture module call id
-        var moduleCallId
-        // create mock lock client
-        var mockLogClient = new MockLogClient()
-        // set immutable params
-        immutable
-            .logClient(mockLogClient)
-            .strictArgs(false)
-        // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
-        })
-        // call foo which should log
-        return fooModule.foo()
-        // verify returned value
-        .then(value => {
-            assert.strictEqual(value, true)
-        })
+    afterEach(function () {
+        // clear sinon sandbox
+        sandbox.restore()
     })
 
-    it('should log module call and return', function () {
-        // capture module call id
-        var moduleCallId
-        // create mock lock client
-        var mockLogClient = new MockLogClient({
-            log: ()=> [
-                // 1st call: module call
-                (type, data) => {
-                    // validate args
-                    assert.strictEqual(type, 'moduleCall')
-                    assert.isObject(data.args)
-                    // capture module call id
-                    moduleCallId = data.moduleCallId
-                },
-                // 2nd call: module call resolve
-                (type, data) => {
-                    // validate args
-                    assert.strictEqual(type, 'moduleCallResolve')
-                    assert.strictEqual(data.moduleCallId, moduleCallId)
-                    assert.strictEqual(data.moduleCallResolveData, true)
-                },
-            ],
-        })
-        // set immutable params
-        immutable
-            .logClient(mockLogClient)
-            .strictArgs(false)
+    it('should log module call and return', async function () {
         // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            foo: function (args) {
-                return Promise.resolve(true)
-            },
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
         })
         // call foo which should log
-        return fooModule.foo()
+        var value = await fooModule.foo({foo: true})
         // verify returned value
-        .then(value => {
-            assert.strictEqual(value, true)
-        })
+        assert.strictEqual(value, true)
+        // check that log client called
+        assert.calledTwice(logClient.log)
+        // get args from log client calls
+        var first = logClient.log.getCall(0).args
+        var second = logClient.log.getCall(1).args
+        // check args for first log call
+        assert.containSubset(first, ['moduleCall', {args: {foo: true}}])
+        // get module call id from first log
+        var moduleCallId = first[1].moduleCallId
+        // check args for second log call
+        assert.containSubset(second, ['moduleCallResolve', {
+            moduleCallId: moduleCallId,
+            moduleCallResolveData: true,
+        }])
     })
 
-    it('should have correct stack in log', function () {
-        // capture module call id
-        var moduleCallId
-        // create mock lock client
-        var mockLogClient = new MockLogClient({
-            log: ()=> [
-                // 1st call: module call foo
-                (type, data) => {
-                    assert.deepEqual(data.args.session.stack, [])
-                },
-                // 2nd call: module call bar
-                (type, data) => {
-                    assert.deepEqual(data.args.session.stack, ['FooModule.foo'])
-                },
-                // 3rd call: resolve bar
-                () => {},
-                // 4th call: resolve foo
-                () => {},
-            ],
-        })
-        // set immutable params
-        immutable
-            .logClient(mockLogClient)
-            .strictArgs(false)
+    it('should have correct stack in log', async function () {
+        // create bar stub
+        var bar = sandbox.stub().resolves(true)
         // create FooModule
-        var fooModule = immutable.module('FooModule', {
-            bar: function (args) {
-                return Promise.resolve(true)
-            },
-            foo: function (args) {
-                return fooModule.bar(args)
-            },
+        var fooModule = ImmutableCore.module('FooModule', {
+            bar: bar,
+            foo: args => fooModule.bar(args),
         })
         // call foo which should log
-        return fooModule.foo()
+        var value = await fooModule.foo()
         // verify returned value
-        .then(value => {
-            assert.strictEqual(value, true)
-        })
+        assert.strictEqual(value, true)
+        // check that log client called
+        assert.callCount(logClient.log, 4)
+        // get args from log client call
+        var second = logClient.log.getCall(1).args
+        // check stack for bar
+        assert.containSubset(second, ['moduleCall', {
+            args: {
+                session: { stack: ['FooModule.foo','FooModule.bar'] },
+            },
+            functionName: 'bar',
+            moduleName: 'FooModule',
+        }])
     })
 
 })
