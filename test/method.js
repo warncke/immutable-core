@@ -84,13 +84,11 @@ describe('immutable-core methods', function () {
         var fooModule = ImmutableCore.module('FooModule', {})
         // create foo method
         var fooMethod = ImmutableCore.method('FooModule.foo', function () {}, {
-            defaultArgs: {foo: 0},
             logClient: logClient,
             strictArgs: false,
         })
         // check method meta
         assert.containSubset(fooModule.foo.meta, {
-            defaultArgs: {foo: 0},
             logClient: logClient,
             strictArgs: false,
         })

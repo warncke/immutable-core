@@ -154,46 +154,4 @@ describe('immutable-core method calls', function () {
         ]}})
     })
 
-    it('should set default arg values', async function () {
-        // create foo stub
-        var foo = sandbox.stub().resolves()
-        // set default args
-        var defaultArgs = {
-            bar: null,
-            foo: 0,
-            x: 'x',
-            y: {foo: 'bar'},
-            z: ['foo'],
-        }
-        // create FooModule
-        var fooModule = ImmutableCore.module('FooModule', {}, {
-            strictArgs: false,
-        })
-        // create foo method
-        ImmutableCore.method('FooModule.foo', foo, {
-            defaultArgs: defaultArgs,
-        })
-        // call should resolve
-        await fooModule.foo()
-        // check args
-        assert.calledWithMatch(foo, defaultArgs)
-    })
-
-    it('should set default arg values using lodash get/set', async function () {
-        // create foo stub
-        var foo = sandbox.stub().resolves()
-        // create FooModule
-        var fooModule = ImmutableCore.module('FooModule', {}, {
-            strictArgs: false,
-        })
-        // create foo method
-        ImmutableCore.method('FooModule.foo', foo, {
-            defaultArgs: {'foo.bar': true},
-        })
-        // call should resolve
-        await fooModule.foo()
-        // check args
-        assert.calledWithMatch(foo, {foo: {bar: true}})
-    })
-
 })
