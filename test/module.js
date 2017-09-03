@@ -88,6 +88,50 @@ describe('immutable-core modules', function () {
         })
     })
 
+    it('should add method to module', function () {
+        // create FooModule with no methods
+        var fooModule = ImmutableCore.module('FooModule', {})
+        // add method
+        var foo = fooModule.method('foo', () => true)
+        // check that foo added
+        assert.isFunction(fooModule.foo)
+        // check that method added to global register
+        assert.isTrue(ImmutableCore.hasMethod('FooModule.foo'))
+    })
+
+    it('should add bind to method', function () {
+        // create FooModule with bar and foo methods
+        var fooModule = ImmutableCore.module('FooModule', {
+            bar: () => true,
+            foo: () => true,
+        })
+        // bind bar to foo
+        fooModule.bind('with', 'foo', fooModule.bar)
+        // check that bind added to global config
+        assert.containSubset(ImmutableCore.getGlobal(), {
+            binds: {FooModule: {foo: {with: {'FooModule.bar': {
+                bound: true,
+                method: fooModule.bar,
+            }}}}}
+        })
+    })
+
+    it('should add cache to method', function () {
+        // create FooModule with bar and foo methods
+        var fooModule = ImmutableCore.module('FooModule', {
+            foo: () => true,
+        })
+        // and cache to foo
+        fooModule.cache('foo', {cacheClient: cacheClient})
+        // check that bind added to global config
+        assert.containSubset(ImmutableCore.getGlobal(), {
+            caches: {FooModule: {foo: {
+                cached: true,
+                cacheClient: cacheClient,
+            }}}
+        })
+    })
+
     it('should throw error on invalid cache client option', function () {
         // create FooModule with bad cache client
         assert.throws(() => {

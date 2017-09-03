@@ -43,6 +43,16 @@ describe('immutable-core module data', function () {
         assert.strictEqual(fooModule.meta.dataId, 'ce35fd691fe6c26448191f4528e1ffef')
     })
 
+    it('should set data via module meta', function () {
+        // create FooModule with no methods
+        var fooModule = ImmutableCore.module('FooModule', {})
+        // set data
+        fooModule.meta.data = {foo: true}
+        // check that data set
+        assert.deepEqual(fooModule.meta.data, {foo: true})
+        assert.strictEqual(fooModule.meta.dataId, 'ce35fd691fe6c26448191f4528e1ffef')
+    })
+
     it('set data should return ImmutableCore', function () {
         // create FooModule with no methods
         var fooModule = ImmutableCore.module('FooModule', {})
