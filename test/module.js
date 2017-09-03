@@ -54,6 +54,7 @@ describe('immutable-core modules', function () {
             allowOverride: false,
             automock: undefined,
             cacheClient: undefined,
+            freeze: true,
             freezeData: true,
             immutableAI: true,
             logClient: undefined,
@@ -67,6 +68,7 @@ describe('immutable-core modules', function () {
         var fooModule = ImmutableCore.module('FooModule', {}, {
             allowOverride: true,
             cacheClient: cacheClient,
+            freeze: false,
             freezeData: false,
             immutableAI: false,
             logClient: logClient,
@@ -77,6 +79,7 @@ describe('immutable-core modules', function () {
         assert.containSubset(fooModule.meta.options, {
             allowOverride: true,
             cacheClient: cacheClient,
+            freeze: false,
             freezeData: false,
             immutableAI: false,
             logClient: logClient,
@@ -107,6 +110,7 @@ describe('immutable-core modules', function () {
         // set defaults
         ImmutableCore.allowOverride(true)
         ImmutableCore.cacheClient(cacheClient)
+        ImmutableCore.freeze(false)
         ImmutableCore.freezeData(false)
         ImmutableCore.immutableAI(false)
         ImmutableCore.logClient(logClient)
@@ -118,6 +122,7 @@ describe('immutable-core modules', function () {
         assert.containSubset(fooModule.meta.options, {
             allowOverride: true,
             cacheClient: cacheClient,
+            freeze: false,
             freezeData: false,
             immutableAI: false,
             logClient: logClient,

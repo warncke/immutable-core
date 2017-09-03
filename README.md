@@ -28,6 +28,9 @@ features and a few major breaking changes.
 
 ### Breaking Changes
 
+* make module an instance of ImmutableCoreModule
+* change meta property from function on prototype to own property object
+* remove support for validate.js
 * after return data will replace instead of merge if not object
 * `cacheId` for cached data changed to `_cached`
 * stack entry for bound methods now appends ,bindType,bindSignature
@@ -35,8 +38,9 @@ features and a few major breaking changes.
 
 ### New Features
 
-* `freeze` calls Object.freeze on args - enabled by defaault except in prod
-* `resolve` deep resolves promises in args/return - enabled by default
+* argument and return validation with JSON Schema and AJV
+* `freeze` calls Object.freeze on args - enabled by default except in prod
+* `resolve` resolves promises in args/return - enabled by default
 * `freezeData` calls Object.freeze on module data - enabled by default
 * `with` bind type executes at same time with same args and merges results
 * `withDetach` bind type executes the same as `with` but does not block

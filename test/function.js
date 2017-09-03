@@ -12,7 +12,7 @@ const MockLogClient = require('../mock/mock-log-client')
 const assert = chai.assert
 sinon.assert.expose(chai.assert, { prefix: '' })
 
-describe('immutable-core: functions', function () {
+describe('immutable-core functions', function () {
 
     var sandbox
 

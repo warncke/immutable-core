@@ -3,6 +3,7 @@
   "dependencies": {
     "bluebird": "3.5.0",
     "deep-freeze-strict": "1.1.1",
+    "deep-resolve": "2.0.1",
     "get-env": "0.5.10",
     "if-defined": "1.0.11",
     "immutable-ai": "0.5.5",
