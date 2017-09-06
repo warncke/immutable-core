@@ -40,8 +40,8 @@ features and a few major breaking changes.
 ### New Features
 
 * args and return validation with Ajv/JSON schema
-* `freeze` calls Object.freeze on args - enabled by default except in prod
-* `resolve` resolves promises in args/return - enabled by default
+* `freeze` calls Object.freeze on args - disabled by default
+* `resolve` resolves promises in args/return - disabled by default
 * globally shared immutable module.meta.data
 * `freezeData` calls Object.freeze on module data - enabled by default
 * `with` bind type executes at same time with same args and merges results
@@ -371,8 +371,10 @@ Any properties with a `default` value will be added to return values.
         foo: Promise.resolve(true)
     })
 
-By default Immutable Core will resolve all promises in both args and return
-values.
+When resolve is enabled Immutable Core will resolve any promises in args and
+return objects.
+
+This feature is disabled by default due to the high overhead involved.
 
 In the above example the args for `fooMethod` will be {foo: true} and the
 return value will be {foo: true}.
@@ -411,7 +413,7 @@ Shared module data can be read directly from the module `meta.data` or via the
         }
     })
 
-The `freeze` option is enabled by default except in prod (NODE_ENV=production).
+The `freeze` option is disabled by default.
 
 When `freeze` is enabled method arguments will be frozen recursively with
 Object.freeze so that any attempt to change values will throw an error.
@@ -644,8 +646,7 @@ clients.
 
 Apply Object.freeze recursively to args before calling method.
 
-Freezing is disabled by default in prod (NODE_ENV=production) and enabled
-everywhere else.
+Freezing is disabled by default.
 
 The overhead for Object.freeze is relatively high which is why is is disabled
 by default in production.
@@ -685,10 +686,10 @@ clients.
 
 ### resolve
 
-    ImmutableCore.resolve(false)
+    ImmutableCore.resolve(true)
 
-By default Immutable Core will resolve all promises in method args and return
-values.
+To enable resolving promises in the args and return values of methods set
+resolve to true.
 
 Traversing objects to look for promises to resolve incurs significant overhead,
 especially with very large objects, so this can be disabled where not needed.

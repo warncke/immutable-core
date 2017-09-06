@@ -54,11 +54,11 @@ describe('immutable-core modules', function () {
             allowOverride: false,
             automock: undefined,
             cacheClient: undefined,
-            freeze: true,
+            freeze: false,
             freezeData: true,
             immutableAI: true,
             logClient: undefined,
-            resolve: true,
+            resolve: false,
             strictArgs: true,
         })
     })
@@ -68,22 +68,22 @@ describe('immutable-core modules', function () {
         var fooModule = ImmutableCore.module('FooModule', {}, {
             allowOverride: true,
             cacheClient: cacheClient,
-            freeze: false,
+            freeze: true,
             freezeData: false,
             immutableAI: false,
             logClient: logClient,
-            resolve: false,
+            resolve: true,
             strictArgs: false,
         })
         // test default options
         assert.containSubset(fooModule.meta.options, {
             allowOverride: true,
             cacheClient: cacheClient,
-            freeze: false,
+            freeze: true,
             freezeData: false,
             immutableAI: false,
             logClient: logClient,
-            resolve: false,
+            resolve: true,
             strictArgs: false,
         })
     })
@@ -154,11 +154,11 @@ describe('immutable-core modules', function () {
         // set defaults
         ImmutableCore.allowOverride(true)
         ImmutableCore.cacheClient(cacheClient)
-        ImmutableCore.freeze(false)
+        ImmutableCore.freeze(true)
         ImmutableCore.freezeData(false)
         ImmutableCore.immutableAI(false)
         ImmutableCore.logClient(logClient)
-        ImmutableCore.resolve(false)
+        ImmutableCore.resolve(true)
         ImmutableCore.strictArgs(false)
         // create FooModule with custom options
         var fooModule = ImmutableCore.module('FooModule', {})
@@ -166,11 +166,11 @@ describe('immutable-core modules', function () {
         assert.containSubset(fooModule.meta.options, {
             allowOverride: true,
             cacheClient: cacheClient,
-            freeze: false,
+            freeze: true,
             freezeData: false,
             immutableAI: false,
             logClient: logClient,
-            resolve: false,
+            resolve: true,
             strictArgs: false,
         })
     })
