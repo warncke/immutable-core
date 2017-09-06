@@ -25,7 +25,7 @@ describe('immutable-core modules', function () {
 
     beforeEach(function () {
         // reset global singleton data
-        ImmutableCore.reset()
+        ImmutableCore.reset().strictArgs(false)
         // create sinon sandbox
         sandbox = sinon.sandbox.create()
         // create mock log client
@@ -47,6 +47,8 @@ describe('immutable-core modules', function () {
     })
 
     it('module should have correct default options', function () {
+        // reset global singleton data
+        ImmutableCore.reset()
         // create FooModule with no methods
         var fooModule = ImmutableCore.module('FooModule', {})
         // test default options
