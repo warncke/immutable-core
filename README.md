@@ -42,7 +42,7 @@ features and a few major breaking changes.
 * args and return validation with Ajv/JSON schema
 * `freeze` calls Object.freeze on args - disabled by default
 * `resolve` resolves promises in args/return - disabled by default
-* globally shared immutable module.meta.data
+* globally shared immutable module.data
 * `freezeData` calls Object.freeze on module data - enabled by default
 * `with` bind type executes at same time with same args and merges results
 * `withDetach` bind type executes the same as `with` but does not block
@@ -385,10 +385,12 @@ return value will be {foo: true}.
 
     ImmutableCore.setData('fooModule', {})
 
-    fooModule.meta.data = { ... }
+    fooModule.data = { ... }
 
 Shared module data can be set for a module either directly on the module
-`meta.data` property for via the `ImmutableCore.setData` method.
+`data` property for via the `ImmutableCore.setData` method.
+
+The module `meta.data` property is identical to module `data`.
 
 Whenever data is set it will have its id calculated and the data will not be
 set if the id has not changed. Data cannot have circular references.
@@ -399,10 +401,12 @@ Data will be frozen with a recursive Object.freeze by default.
 
     ImmutableCore.getData('fooModule')
 
+    fooModule.data
+
     fooModule.meta.data
 
-Shared module data can be read directly from the module `meta.data` or via the
-`ImmutableCore.getData` method.
+Shared module data can be read directly from the module `data` property, the
+`meta.data` or via the `ImmutableCore.getData` method.
 
 ## Freezing method args
 
