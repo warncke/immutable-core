@@ -6,8 +6,8 @@
     "deep-freeze-strict": "1.1.1",
     "deep-resolve": "2.0.1",
     "get-env": "0.5.10",
-    "if-defined": "1.0.13",
-    "immutable-ai": "0.6.1",
+    "if-defined": "1.0.14",
+    "immutable-ai": "0.6.2",
     "immutable-instance-id": "0.3.4",
     "immutable-require-valid-log-client": "0.1.13",
     "immutable-require-valid-optional-object": "0.1.13",
@@ -15,15 +15,15 @@
     "micro-timestamp": "0.1.27",
     "random-unique-id": "1.0.13",
     "stable-id": "1.0.8",
-    "uglify-es": "3.1.0"
+    "uglify-es": "3.1.1"
   },
   "description": "Immutable modular framework",
   "devDependencies": {
     "chai": "4.1.2",
     "chai-as-promised": "7.1.1",
     "chai-subset": "1.6.0",
-    "mocha": "3.5.1",
-    "sinon": "3.2.1"
+    "mocha": "3.5.3",
+    "sinon": "3.3.0"
   },
   "directories": {
     "test": "test"
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.2.2"
+  "version": "2.2.3"
 }
