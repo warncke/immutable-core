@@ -8,13 +8,13 @@
     "get-env": "0.5.10",
     "if-defined": "1.0.14",
     "immutable-ai": "0.6.2",
-    "immutable-instance-id": "0.3.4",
-    "immutable-require-valid-log-client": "0.1.13",
-    "immutable-require-valid-optional-object": "0.1.13",
+    "immutable-instance-id": "0.3.6",
+    "immutable-require-valid-log-client": "0.1.14",
+    "immutable-require-valid-optional-object": "0.1.14",
     "lodash": "4.17.4",
-    "micro-timestamp": "0.1.27",
-    "random-unique-id": "1.0.13",
-    "stable-id": "1.0.8",
+    "micro-timestamp": "0.1.28",
+    "random-unique-id": "1.0.14",
+    "stable-id": "1.0.9",
     "uglify-es": "3.1.1"
   },
   "description": "Immutable modular framework",
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.2.3"
+  "version": "2.2.4"
 }
