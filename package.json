@@ -15,7 +15,7 @@
     "micro-timestamp": "0.1.28",
     "random-unique-id": "1.0.14",
     "stable-id": "1.0.9",
-    "uglify-es": "3.1.1"
+    "uglify-es": "3.1.2"
   },
   "description": "Immutable modular framework",
   "devDependencies": {
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.2.4"
+  "version": "2.2.5"
 }
