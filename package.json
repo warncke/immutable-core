@@ -1,13 +1,13 @@
 {
   "author": "Ersun Warncke <ersun.warncke@gmail.com>",
   "dependencies": {
-    "ajv": "5.2.2",
+    "ajv": "5.2.3",
     "bluebird": "3.5.0",
     "deep-freeze-strict": "1.1.1",
     "deep-resolve": "2.0.1",
     "get-env": "0.5.10",
     "if-defined": "1.0.14",
-    "immutable-ai": "0.6.2",
+    "immutable-ai": "0.7.0",
     "immutable-instance-id": "0.3.6",
     "immutable-require-valid-log-client": "0.1.14",
     "immutable-require-valid-optional-object": "0.1.14",
@@ -23,7 +23,7 @@
     "chai-as-promised": "7.1.1",
     "chai-subset": "1.6.0",
     "mocha": "3.5.3",
-    "sinon": "3.3.0"
+    "sinon": "4.0.0"
   },
   "directories": {
     "test": "test"
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.2.5"
+  "version": "2.2.6"
 }
