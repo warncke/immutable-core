@@ -8,7 +8,7 @@
     "get-env": "0.5.10",
     "if-defined": "1.0.15",
     "immutable-ai": "0.7.2",
-    "immutable-instance-id": "0.3.6",
+    "immutable-instance-id": "0.3.7",
     "immutable-require-valid-log-client": "0.1.14",
     "immutable-require-valid-optional-object": "0.1.14",
     "lodash": "4.17.4",
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.2.8"
+  "version": "2.2.9"
 }
