@@ -2,13 +2,13 @@
   "author": "Ersun Warncke <ersun.warncke@gmail.com>",
   "dependencies": {
     "ajv": "5.2.3",
-    "bluebird": "3.5.0",
+    "bluebird": "3.5.1",
     "deep-freeze-strict": "1.1.1",
     "deep-resolve": "2.0.1",
     "get-env": "0.5.10",
     "if-defined": "1.0.15",
     "immutable-ai": "0.7.2",
-    "immutable-instance-id": "0.3.7",
+    "immutable-instance-id": "0.3.8",
     "immutable-require-valid-log-client": "0.1.15",
     "immutable-require-valid-optional-object": "0.1.15",
     "lodash": "4.17.4",
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.2.10"
+  "version": "2.2.11"
 }
