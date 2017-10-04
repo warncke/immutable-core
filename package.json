@@ -6,8 +6,8 @@
     "deep-freeze-strict": "1.1.1",
     "deep-resolve": "2.0.1",
     "get-env": "0.5.10",
-    "if-defined": "1.0.14",
-    "immutable-ai": "0.7.0",
+    "if-defined": "1.0.15",
+    "immutable-ai": "0.7.2",
     "immutable-instance-id": "0.3.6",
     "immutable-require-valid-log-client": "0.1.14",
     "immutable-require-valid-optional-object": "0.1.14",
@@ -22,8 +22,8 @@
     "chai": "4.1.2",
     "chai-as-promised": "7.1.1",
     "chai-subset": "1.6.0",
-    "mocha": "3.5.3",
-    "sinon": "4.0.0"
+    "mocha": "4.0.0",
+    "sinon": "4.0.1"
   },
   "directories": {
     "test": "test"
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.2.7"
+  "version": "2.2.8"
 }
