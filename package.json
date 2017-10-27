@@ -1,7 +1,7 @@
 {
   "author": "Ersun Warncke <ersun.warncke@gmail.com>",
   "dependencies": {
-    "ajv": "5.2.3",
+    "ajv": "5.3.0",
     "bluebird": "3.5.1",
     "deep-freeze-strict": "1.1.1",
     "deep-resolve": "2.0.1",
@@ -23,7 +23,7 @@
     "chai-as-promised": "7.1.1",
     "chai-subset": "1.6.0",
     "mocha": "4.0.1",
-    "sinon": "4.0.1"
+    "sinon": "4.0.2"
   },
   "directories": {
     "test": "test"
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.2.21"
+  "version": "2.2.22"
 }
