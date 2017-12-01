@@ -1,7 +1,7 @@
 {
   "author": "Ersun Warncke <ersun.warncke@gmail.com>",
   "dependencies": {
-    "ajv": "5.3.0",
+    "ajv": "5.5.0",
     "bluebird": "3.5.1",
     "deep-freeze-strict": "1.1.1",
     "deep-resolve": "2.0.1",
@@ -15,7 +15,7 @@
     "micro-timestamp": "0.1.33",
     "random-unique-id": "1.0.19",
     "stable-id": "1.0.11",
-    "uglify-es": "3.1.10"
+    "uglify-es": "3.2.0"
   },
   "description": "Immutable modular framework",
   "devDependencies": {
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.2.27"
+  "version": "2.2.28"
 }
