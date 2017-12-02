@@ -1,7 +1,7 @@
 {
   "author": "Ersun Warncke <ersun.warncke@gmail.com>",
   "dependencies": {
-    "ajv": "5.5.0",
+    "ajv": "5.5.1",
     "bluebird": "3.5.1",
     "deep-freeze-strict": "1.1.1",
     "deep-resolve": "2.0.1",
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.2.30"
+  "version": "2.2.31"
 }
