@@ -12,8 +12,8 @@
     "immutable-require-valid-log-client": "0.1.16",
     "immutable-require-valid-optional-object": "0.1.16",
     "lodash": "4.17.4",
-    "micro-timestamp": "0.1.35",
-    "random-unique-id": "1.0.21",
+    "micro-timestamp": "0.1.36",
+    "random-unique-id": "1.0.22",
     "stable-id": "1.0.11",
     "uglify-es": "3.2.2"
   },
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.2.34"
+  "version": "2.2.35"
 }
