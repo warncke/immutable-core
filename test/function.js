@@ -22,7 +22,7 @@ describe('immutable-core functions', function () {
         // reset global singleton data
         ImmutableCore.reset()
         // create sinon sandbox
-        sandbox = sinon.sandbox.create()
+        sandbox = sinon.createSandbox()
         // create mock logclient
         logClient = new MockLogClient(sandbox)
     })

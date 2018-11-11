@@ -27,7 +27,7 @@ describe('immutable-core modules', function () {
         // reset global singleton data
         ImmutableCore.reset().strictArgs(false)
         // create sinon sandbox
-        sandbox = sinon.sandbox.create()
+        sandbox = sinon.createSandbox()
         // create mock log client
         logClient = new MockLogClient(sandbox)
         // create mock cache client

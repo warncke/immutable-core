@@ -24,7 +24,7 @@ describe('immutable-core bind after method call detached', function () {
         // reset global singleton data
         ImmutableCore.reset().strictArgs(false)
         // create sinon sandbox
-        sandbox = sinon.sandbox.create()
+        sandbox = sinon.createSandbox()
     })
 
     afterEach(function () {

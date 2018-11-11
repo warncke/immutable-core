@@ -22,7 +22,7 @@ describe('immutable-core cache', function () {
         // reset global singleton data
         ImmutableCore.reset().strictArgs(false)
         // create sinon sandbox
-        sandbox = sinon.sandbox.create()
+        sandbox = sinon.createSandbox()
         // create mock logclient
         cacheClient = new MockCacheClient(sandbox)
     })

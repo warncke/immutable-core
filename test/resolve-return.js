@@ -24,7 +24,7 @@ describe('immutable-core resolve return', function () {
         // reset global singleton data
         ImmutableCore.reset().strictArgs(false).resolve(true)
         // create sinon sandbox
-        sandbox = sinon.sandbox.create()
+        sandbox = sinon.createSandbox()
     })
 
     afterEach(function () {

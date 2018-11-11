@@ -23,7 +23,7 @@ describe('immutable-core method calls', function () {
         // reset global singleton data
         ImmutableCore.reset()
         // create sinon sandbox
-        sandbox = sinon.sandbox.create()
+        sandbox = sinon.createSandbox()
     })
 
     afterEach(function () {

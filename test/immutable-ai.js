@@ -24,7 +24,7 @@ describe('immutable-core immutable ai', function () {
         // reset global singleton data
         ImmutableCore.reset().strictArgs(false)
         // create sinon sandbox
-        sandbox = sinon.sandbox.create()
+        sandbox = sinon.createSandbox()
         // fake session to use for testing
         session = {
             sessionId: '11111111111111111111111111111111',
