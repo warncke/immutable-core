@@ -6,8 +6,8 @@
     "deep-freeze-strict": "1.1.1",
     "deep-resolve": "2.0.1",
     "get-env": "0.5.10",
-    "if-defined": "1.0.17",
-    "immutable-ai": "0.8.2",
+    "if-defined": "1.0.18",
+    "immutable-ai": "0.8.3",
     "immutable-instance-id": "0.4.0",
     "immutable-require-valid-log-client": "0.1.18",
     "immutable-require-valid-optional-object": "0.1.17",
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.3.1"
+  "version": "2.3.2"
 }
