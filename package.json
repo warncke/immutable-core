@@ -7,9 +7,9 @@
     "deep-resolve": "2.0.1",
     "get-env": "0.5.10",
     "if-defined": "1.0.17",
-    "immutable-ai": "0.8.1",
+    "immutable-ai": "0.8.2",
     "immutable-instance-id": "0.4.0",
-    "immutable-require-valid-log-client": "0.1.17",
+    "immutable-require-valid-log-client": "0.1.18",
     "immutable-require-valid-optional-object": "0.1.17",
     "lodash": "4.17.11",
     "micro-timestamp": "1.0.0",
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.3.0"
+  "version": "2.3.1"
 }
