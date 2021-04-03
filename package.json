@@ -1,29 +1,29 @@
 {
   "author": "Ersun Warncke <ersun.warncke@gmail.com>",
   "dependencies": {
-    "ajv": "5.5.2",
-    "bluebird": "3.5.3",
+    "ajv": "8.0.5",
+    "bluebird": "3.7.2",
     "deep-freeze-strict": "1.1.1",
     "deep-resolve": "2.0.1",
     "get-env": "0.5.10",
     "if-defined": "1.0.18",
     "immutable-ai": "0.8.3",
-    "immutable-instance-id": "0.4.1",
+    "immutable-instance-id": "0.5.0",
     "immutable-require-valid-log-client": "0.1.18",
     "immutable-require-valid-optional-object": "0.1.18",
-    "lodash": "4.17.11",
-    "micro-timestamp": "1.0.0",
-    "random-unique-id": "1.1.0",
+    "lodash": "4.17.21",
+    "micro-timestamp": "2.0.0",
+    "random-unique-id": "2.0.0",
     "stable-id": "1.0.13",
     "uglify-es": "3.3.9"
   },
   "description": "Immutable modular framework",
   "devDependencies": {
-    "chai": "4.2.0",
+    "chai": "4.3.4",
     "chai-as-promised": "7.1.1",
     "chai-subset": "1.6.0",
-    "mocha": "5.2.0",
-    "sinon": "7.1.1"
+    "mocha": "8.3.2",
+    "sinon": "10.0.0"
   },
   "directories": {
     "test": "test"
@@ -38,5 +38,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "2.3.3"
+  "version": "3.0.0"
 }
