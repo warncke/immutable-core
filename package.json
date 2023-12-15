@@ -1,35 +1,32 @@
 {
   "author": "Ersun Warncke <ersun.warncke@gmail.com>",
   "dependencies": {
-    "ajv": "8.0.5",
+    "ajv": "8.12.0",
     "bluebird": "3.7.2",
     "deep-freeze-strict": "1.1.1",
     "deep-resolve": "2.0.1",
     "get-env": "0.5.10",
     "if-defined": "1.0.18",
-    "immutable-ai": "0.8.3",
-    "immutable-instance-id": "0.5.0",
-    "immutable-require-valid-log-client": "0.1.18",
+    "immutable-ai": "0.9.0",
+    "immutable-instance-id": "0.6.0",
+    "immutable-require-valid-log-client": "0.2.0",
     "immutable-require-valid-optional-object": "0.1.18",
     "lodash": "4.17.21",
-    "micro-timestamp": "2.0.0",
-    "random-unique-id": "2.0.0",
+    "micro-timestamp": "2.1.0",
+    "random-unique-id": "2.1.0",
     "stable-id": "1.0.13",
     "uglify-es": "3.3.9"
   },
   "description": "Immutable modular framework",
   "devDependencies": {
-    "chai": "4.3.4",
+    "chai": "4.3.10",
     "chai-as-promised": "7.1.1",
     "chai-subset": "1.6.0",
-    "mocha": "8.3.2",
+    "mocha": "10.2.0",
     "sinon": "10.0.0"
   },
   "directories": {
     "test": "test"
-  },
-  "engines": {
-    "node": ">=7.6.0"
   },
   "license": "MIT",
   "main": "lib/immutable-core.js",
@@ -38,5 +35,5 @@
   "scripts": {
     "test": "mocha"
   },
-  "version": "3.0.0"
+  "version": "3.1.0"
 }
